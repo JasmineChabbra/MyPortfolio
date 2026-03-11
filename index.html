@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jasmine — Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b;--surface:#111113;--surface2:#18181b;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#f4f0e8;--muted:rgba(244,240,232,0.42);
+  --accent:#f0c040;--red:#e05c45;--green:#4ade80;
+  --grad:linear-gradient(135deg,#f0c040,#e05c45);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;cursor:none;}
+::selection{background:var(--accent);color:#000;}
+a{text-decoration:none;color:inherit;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--accent);}
+
+/* ── CURSOR ── */
+#cd{position:fixed;width:9px;height:9px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s;}
+#cr{position:fixed;width:42px;height:42px;border:1px solid rgba(240,192,64,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+body.hov #cd{width:18px;height:18px;}
+body.hov #cr{width:62px;height:62px;border-color:var(--accent);}
+
+/* ── NOISE ── */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:1;}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+.ld-letters{display:flex;overflow:hidden;}
+.ld-letters span{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,110px);letter-spacing:.07em;color:transparent;-webkit-text-stroke:1px rgba(244,240,232,.12);display:inline-block;transform:translateY(120%) skewY(6deg);animation:lUp .65s cubic-bezier(.16,1,.3,1) forwards;}
+.ld-letters span.g{-webkit-text-stroke-color:var(--accent);}
+@keyframes lUp{to{transform:translateY(0) skewY(0);}}
+.ld-bar-wrap{width:200px;height:1px;background:var(--border);overflow:hidden;position:relative;}
+.ld-bar-fill{position:absolute;inset:0;background:var(--grad);transform:translateX(-100%);animation:barIn 1.8s cubic-bezier(.16,1,.3,1) .3s forwards;}
+@keyframes barIn{to{transform:translateX(0);}}
+.ld-pct{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:var(--muted);}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:500;height:70px;padding:0 60px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s;border-bottom:1px solid transparent;}
+#nav.stuck{background:rgba(9,9,11,.88);backdrop-filter:blur(20px);border-bottom-color:var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .3s;position:relative;padding-bottom:2px;}
+.nav-links a::before{content:attr(data-i);color:var(--accent);font-size:.48rem;vertical-align:super;margin-right:3px;}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.nav-links a:hover,.nav-links a.on{color:var(--text);}
+.nav-links a:hover::after,.nav-links a.on::after{transform:scaleX(1);}
+.nav-cta{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);padding:9px 20px;background:transparent;cursor:pointer;transition:all .3s;}
+.nav-cta:hover{background:var(--accent);color:#000;}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.ham span{width:26px;height:1.5px;background:var(--text);transition:all .35s;}
+
+/* ── FULLSCREEN MENU ── */
+#fmenu{position:fixed;inset:0;background:var(--bg);z-index:490;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;clip-path:circle(0% at calc(100% - 42px) 35px);transition:clip-path .7s cubic-bezier(.16,1,.3,1);}
+#fmenu.open{clip-path:circle(150% at calc(100% - 42px) 35px);}
+#fmenu a{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4.5rem);letter-spacing:.07em;color:rgba(244,240,232,.15);transition:color .3s;}
+#fmenu.open a{color:rgba(244,240,232,.18);}
+#fmenu a:hover{color:var(--accent);}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:grid;grid-template-rows:1fr auto;padding:0 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:72px 72px;pointer-events:none;}
+.hero::after{content:'';position:absolute;top:-300px;right:-200px;width:750px;height:750px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.07) 0%,transparent 68%);pointer-events:none;animation:breathe 7s ease infinite;}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+.hero-inner{display:flex;align-items:center;padding-top:70px;gap:48px;}
+.hero-left{flex:1;}
+.badge{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(240,192,64,.25);padding:7px 16px 7px 12px;border-radius:100px;margin-bottom:36px;opacity:0;animation:fu .8s ease 2.1s both;}
+.badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:bl 2s infinite;}
+@keyframes bl{0%,100%{opacity:1;}50%{opacity:.25;}}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(66px,10vw,148px);line-height:.87;letter-spacing:.02em;overflow:hidden;}
+.hero-h1 .row{display:block;overflow:hidden;}
+.hero-h1 .row span{display:block;transform:translateY(112%) skewY(4deg);transition:transform 1s cubic-bezier(.16,1,.3,1);}
+.hero-h1.go .row:nth-child(1) span{transform:translateY(0) skewY(0);transition-delay:.04s;}
+.hero-h1.go .row:nth-child(2) span{transform:translateY(0) skewY(0);transition-delay:.14s;}
+.hero-h1.go .row:nth-child(3) span{transform:translateY(0) skewY(0);transition-delay:.24s;}
+.hero-h1 .strk{-webkit-text-stroke:2px var(--text);color:transparent;}
+.hero-h1 .gld{color:var(--accent);}
+.hero-sub{margin-top:24px;font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--muted);letter-spacing:.04em;opacity:0;animation:fu .8s ease 2.4s both;}
+.hero-sub .tw{color:var(--accent);}
+.hero-sub .cb{display:inline-block;width:2px;height:.85em;background:var(--accent);vertical-align:middle;margin-left:2px;animation:bl .8s infinite;}
+.hero-btns{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap;opacity:0;animation:fu .8s ease 2.6s both;}
+.btn-g{background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:15px 36px;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;position:relative;overflow:hidden;display:inline-block;}
+.btn-g::before{content:'';position:absolute;inset:0;background:#000;transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.btn-g:hover::before{transform:scaleX(1);}
+.btn-g .t{position:relative;z-index:1;}
+.btn-g:hover .t{color:var(--accent);}
+.btn-o{background:transparent;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px 36px;border:1px solid var(--border2);cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;display:inline-block;}
+.btn-o:hover{border-color:var(--accent);color:var(--accent);}
+.hero-right{display:flex;flex-direction:column;gap:14px;width:200px;flex-shrink:0;align-self:flex-end;padding-bottom:60px;opacity:0;animation:fr .9s ease 2.8s both;}
+@keyframes fr{from{opacity:0;transform:translateX(28px);}to{opacity:1;transform:translateX(0);}}
+.stat{background:var(--surface);border:1px solid var(--border);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .3s;}
+.stat:hover{border-color:var(--accent);}
+.stat::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--grad);transition:height .5s;}
+.stat:hover::before{height:100%;}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat-l{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+.hero-bottom{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-top:1px solid var(--border);opacity:0;animation:fu .6s ease 3s both;}
+.scroll-c{display:flex;align-items:center;gap:11px;font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.scroll-ring{width:26px;height:26px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55rem;animation:bob 2.5s ease infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+.hero-soc{display:flex;gap:16px;}
+.hero-soc a{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .3s;display:flex;align-items:center;gap:4px;}
+.hero-soc a::before{content:'↗';color:var(--accent);font-size:.5rem;}
+.hero-soc a:hover{color:var(--accent);}
+.bg-word{position:absolute;bottom:-50px;right:-40px;font-family:'Bebas Neue',sans-serif;font-size:clamp(120px,18vw,260px);color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.03);pointer-events:none;user-select:none;will-change:transform;line-height:1;}
+
+@keyframes fu{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── MARQUEE ── */
+.mq-wrap{overflow:hidden;background:var(--accent);padding:13px 0;position:relative;z-index:2;}
+.mq-track{display:flex;width:max-content;animation:mq 28s linear infinite;}
+.mq-item{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;color:#000;padding:0 32px;white-space:nowrap;}
+.mq-dot{margin:0 8px;opacity:.35;}
+@keyframes mq{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ── SECTION BASE ── */
+.sec{position:relative;z-index:2;}
+.wrap{max-width:1300px;margin:0 auto;padding:0 60px;}
+.sec-hd{display:flex;justify-content:space-between;align-items:flex-end;padding:88px 0 60px;border-bottom:1px solid var(--border);margin-bottom:64px;}
+.sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,5.5vw,84px);letter-spacing:.04em;line-height:.92;}
+.sec-ttl .strk{-webkit-text-stroke:1.5px rgba(244,240,232,.2);color:transparent;}
+.sec-ttl .gld{color:var(--accent);}
+.sec-aside{max-width:260px;font-size:.82rem;color:var(--muted);line-height:1.8;text-align:right;}
+
+/* ── ABOUT ── */
+.about-sec{background:var(--surface);}
+.about-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:80px;padding-bottom:90px;}
+.about-left p{font-family:'Lora',serif;font-size:1.08rem;line-height:1.88;color:rgba(244,240,232,.72);margin-bottom:22px;}
+.about-left p strong{color:var(--accent);font-weight:600;}
+.about-left p em{color:var(--green);font-style:normal;font-weight:600;}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;}
+.atag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:7px 13px;color:var(--muted);cursor:default;transition:all .3s;}
+.atag:hover{border-color:var(--accent);color:var(--accent);}
+.about-right{display:flex;flex-direction:column;}
+
+/* EXPERIENCE CARD */
+.xp-card{border:1px solid var(--border);padding:28px 28px 28px 24px;margin-bottom:3px;position:relative;overflow:hidden;transition:border-color .4s;cursor:default;}
+.xp-card:hover{border-color:rgba(240,192,64,.3);}
+.xp-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);transition:width .4s;}
+.xp-card:hover::before{width:3px;}
+.xp-card:hover{padding-left:30px;}
+.xp-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:6px;}
+.xp-role{font-family:'Outfit',sans-serif;font-weight:700;font-size:.98rem;color:var(--text);}
+.xp-date{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;margin-left:12px;margin-top:3px;}
+.xp-company{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.xp-bullets{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.xp-bullets li{font-size:.82rem;color:rgba(244,240,232,.6);line-height:1.6;padding-left:16px;position:relative;}
+.xp-bullets li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:.65rem;}
+.xp-bullets li strong{color:var(--accent);font-weight:600;}
+
+/* ── STATS STRIP ── */
+.stats-strip{background:var(--bg);padding:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);}
+.stat-item{padding:40px 32px;border-right:1px solid var(--border);text-align:center;cursor:default;transition:background .3s;}
+.stat-item:last-child{border-right:none;}
+.stat-item:hover{background:var(--surface);}
+.stat-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat-txt{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+
+/* ── SKILLS ── */
+.skills-sec{background:var(--bg);}
+.skills-wrap{padding-bottom:90px;}
+.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;}
+.sk-row{background:var(--surface);padding:24px 28px;border:1px solid transparent;transition:border-color .3s;cursor:default;}
+.sk-row:hover{border-color:rgba(240,192,64,.2);}
+.sk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.sk-name{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .3s;}
+.sk-row:hover .sk-name{color:var(--accent);}
+.sk-pct{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sk-bar{height:2px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;}
+.sk-fill{height:100%;background:var(--grad);width:0;transition:width 1.5s cubic-bezier(.16,1,.3,1);}
+/* skill categories */
+.sk-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:3px;}
+.sk-cat{background:var(--surface);padding:22px 24px;border:1px solid transparent;cursor:default;transition:border-color .3s;}
+.sk-cat:hover{border-color:rgba(240,192,64,.2);}
+.sk-cat-lbl{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.sk-cat-items{display:flex;flex-wrap:wrap;gap:6px;}
+.sk-chip{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);padding:5px 10px;color:var(--muted);transition:all .3s;}
+.sk-chip:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── PROJECTS ── */
+.proj-sec{background:var(--surface);}
+.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;padding-bottom:90px;}
+.proj-card{background:var(--surface2);padding:36px 32px;border:1px solid transparent;position:relative;overflow:hidden;cursor:pointer;transition:all .4s;display:flex;flex-direction:column;justify-content:space-between;min-height:210px;}
+.proj-card:hover{border-color:rgba(240,192,64,.25);background:#1f1f22;}
+.proj-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1);}
+.proj-card:hover::after{transform:scaleX(1);}
+.proj-top{display:flex;justify-content:space-between;align-items:start;}
+.proj-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(244,240,232,.08);transition:-webkit-text-stroke-color .4s;}
+.proj-card:hover .proj-num{-webkit-text-stroke-color:rgba(240,192,64,.2);}
+.proj-arr{font-size:1.1rem;color:var(--accent);opacity:0;transform:translate(-7px,7px);transition:all .35s;}
+.proj-card:hover .proj-arr{opacity:1;transform:translate(0,0);}
+.proj-ttl{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.15rem;color:var(--text);margin-bottom:6px;transition:color .3s;}
+.proj-card:hover .proj-ttl{color:var(--accent);}
+.proj-tech{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.proj-desc{font-size:.8rem;color:rgba(244,240,232,.5);line-height:1.65;margin-bottom:16px;}
+.proj-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.ptag{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);padding:4px 9px;color:var(--muted);}
+
+/* ── CERTIFICATIONS ── */
+.cert-sec{background:var(--bg);}
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding-bottom:90px;}
+.cert-card{padding:36px 30px;background:var(--surface);border:1px solid transparent;position:relative;overflow:hidden;cursor:default;transition:all .4s;}
+.cert-card:hover{border-color:rgba(240,192,64,.25);transform:translateY(-5px);}
+.cert-card::before{content:'★';position:absolute;top:-12px;right:-4px;font-size:72px;color:rgba(240,192,64,.05);transition:transform .5s,color .4s;}
+.cert-card:hover::before{transform:rotate(15deg) scale(1.1);color:rgba(240,192,64,.1);}
+.cert-yr{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.cert-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;color:var(--text);margin-bottom:6px;line-height:1.3;}
+.cert-org{font-size:.78rem;color:var(--muted);}
+
+/* ── ACHIEVEMENTS STRIP ── */
+.ach-sec{background:var(--surface);padding:0;border-top:1px solid var(--border);}
+.ach-inner{padding:72px 60px;}
+.ach-sec .sec-hd{padding-top:0;}
+.ach-list{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;padding-bottom:0;}
+.ach-item{background:var(--surface2);padding:28px 32px;border:1px solid transparent;display:flex;gap:18px;align-items:start;cursor:default;transition:border-color .3s;}
+.ach-item:hover{border-color:rgba(240,192,64,.25);}
+.ach-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px;}
+.ach-txt{font-family:'Outfit',sans-serif;font-size:.9rem;line-height:1.65;color:rgba(244,240,232,.72);}
+.ach-txt strong{color:var(--accent);font-weight:700;}
+
+/* ── CONTACT ── */
+.contact-sec{background:var(--bg);}
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:100px;padding-bottom:90px;}
+.c-headline{font-family:'Lora',serif;font-style:italic;font-size:clamp(22px,2.8vw,42px);line-height:1.4;margin-bottom:40px;font-weight:400;}
+.c-headline strong{font-style:normal;color:var(--accent);}
+.c-info-list{display:flex;flex-direction:column;gap:20px;margin-bottom:32px;}
+.c-row{display:flex;gap:14px;align-items:start;}
+.c-icon{width:40px;height:40px;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:.9rem;transition:all .3s;}
+.c-row:hover .c-icon{background:var(--accent);color:#000;border-color:var(--accent);}
+.c-lbl{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.c-val{font-size:.86rem;color:var(--text);line-height:1.6;}
+.c-socs{display:flex;gap:8px;flex-wrap:wrap;}
+.csoc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:9px 15px;color:var(--muted);transition:all .3s;display:flex;align-items:center;gap:5px;}
+.csoc::before{content:'↗';color:var(--accent);}
+.csoc:hover{border-color:var(--accent);color:var(--accent);}
+
+/* FORM */
+.fform{display:flex;flex-direction:column;gap:0;}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:3px;}
+.ff{position:relative;border:1px solid var(--border);background:var(--surface);margin-bottom:3px;transition:border-color .3s;}
+.ff:focus-within{border-color:var(--accent);}
+.ff.err{border-color:var(--red)!important;}
+.ff.ok{border-color:var(--green)!important;}
+.ff input,.ff textarea{width:100%;background:transparent;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:.92rem;color:var(--text);padding:24px 20px 10px;resize:none;}
+.ff textarea{min-height:130px;padding-top:30px;}
+.ff input::placeholder,.ff textarea::placeholder{color:transparent;}
+.ff-label{position:absolute;top:18px;left:20px;font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);pointer-events:none;transition:all .3s;}
+.ff input:focus~.ff-label,.ff input:not(:placeholder-shown)~.ff-label,
+.ff textarea:focus~.ff-label,.ff textarea:not(:placeholder-shown)~.ff-label{top:8px;font-size:.48rem;color:var(--accent);}
+.ff.err .ff-label{color:var(--red)!important;}
+.ff.ok .ff-label{color:var(--green)!important;}
+.ff-err{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--red);padding:4px 20px 8px;display:none;}
+.ff.err .ff-err{display:block;}
+.ff-ok-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--green);font-size:.8rem;opacity:0;transition:opacity .3s;}
+.ff textarea~.ff-ok-icon{top:20px;transform:none;}
+.ff.ok .ff-ok-icon{opacity:1;}
+.form-hint{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.08em;color:var(--muted);padding:10px 0;display:flex;align-items:center;gap:8px;}
+.form-hint::before{content:'✦';color:var(--accent);}
+.form-actions{display:flex;align-items:center;gap:20px;margin-top:8px;flex-wrap:wrap;}
+.submit-btn{background:var(--accent);color:#000;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:17px 48px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;position:relative;overflow:hidden;}
+.submit-btn::before{content:'';position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.submit-btn:hover::before{transform:scaleX(1);}
+.submit-btn .st{position:relative;z-index:1;}
+.submit-btn:hover .st{color:#fff;}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+.form-status{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:14px 20px;border-left:3px solid transparent;display:none;margin-top:4px;}
+.form-status.success{color:var(--green);border-left-color:var(--green);background:rgba(74,222,128,.07);display:block;}
+.form-status.fail{color:var(--red);border-left-color:var(--red);background:rgba(224,92,69,.07);display:block;}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:34px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;position:relative;z-index:2;}
+.f-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;}
+.f-logo span{color:var(--accent);}
+.f-copy{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.f-links{display:flex;gap:20px;}
+.f-links a{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .3s;}
+.f-links a:hover{color:var(--accent);}
+
+/* ── SCROLL REVEAL ── */
+.sr{opacity:0;transform:translateY(46px);transition:opacity .9s ease,transform .9s cubic-bezier(.16,1,.3,1);}
+.sr.d1{transition-delay:.1s;}.sr.d2{transition-delay:.2s;}.sr.d3{transition-delay:.3s;}.sr.d4{transition-delay:.4s;}
+.sr.vis{opacity:1;transform:translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.about-grid{grid-template-columns:1fr;}.cert-grid{grid-template-columns:repeat(2,1fr);}.stats-row{grid-template-columns:repeat(2,1fr);}.stats-row .stat-item:nth-child(2){border-right:none;}.stats-row .stat-item:nth-child(3){border-top:1px solid var(--border);}.stats-row .stat-item:nth-child(4){border-top:1px solid var(--border);border-right:none;}}
+@media(max-width:900px){#nav{padding:0 24px;}.nav-links,.nav-cta{display:none;}.ham{display:flex;}.hero,.wrap{padding-left:24px;padding-right:24px;}.hero-right{display:none;}.hero-h1{font-size:clamp(58px,15vw,95px);}.sec-hd{flex-direction:column;align-items:flex-start;gap:14px;padding:60px 0 44px;}.sec-aside{text-align:left;}.skills-grid{grid-template-columns:1fr;}.sk-cats{grid-template-columns:1fr;}.proj-grid{grid-template-columns:1fr;}.cert-grid{grid-template-columns:1fr;}.ach-list{grid-template-columns:1fr;}.contact-grid{grid-template-columns:1fr;gap:44px;}.frow2{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}.ach-inner{padding:60px 24px;}.footer{padding:26px 24px;flex-direction:column;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div id="cd"></div>
+<div id="cr"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-letters" id="lletters"></div>
+  <div class="ld-bar-wrap"><div class="ld-bar-fill"></div></div>
+  <div class="ld-pct" id="lpct">0%</div>
+</div>
+
+<!-- FULL MENU -->
+<div id="fmenu">
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#certs">Certifications</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#"><span>J.</span>Chabbra</a>
+  <ul class="nav-links">
+    <li><a href="#about" data-i="01">About</a></li>
+    <li><a href="#skills" data-i="02">Skills</a></li>
+    <li><a href="#projects" data-i="03">Projects</a></li>
+    <li><a href="#certs" data-i="04">Certs</a></li>
+    <li><a href="#contact" data-i="05">Contact</a></li>
+  </ul>
+<a href="./Jasmine_Resume.pdf" download class="nav-cta">Download CV</a>
+<div class="ham" id="ham"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="bg-word" id="bgW">BACK<br>END</div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="badge">✦ &nbsp;Backend Developer · Currently @ Lentra AI</div>
+      <h1 class="hero-h1" id="heroH1">
+        <span class="row"><span>JASMINE</span></span>
+        <span class="row"><span class="strk">BACKEND-</span></span>
+        <span class="row"><span class="gld">DEVELOPER.</span></span>
+      </h1>
+   <p class="hero-sub">
+      Java · Spring Boot · Microservices · PostgreSQL ·
+     <span class="tw" id="typed-el"></span><span class="cb"></span>
+   </p>
+<div class="hero-btns">
+        <a href="#projects" class="btn-g"><span class="t">View My Work</span></a>
+        <a href="#contact" class="btn-o">Get In Touch</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat sr"><div class="stat-n">2+</div><div class="stat-l">Years at Lentra AI</div></div>
+      <div class="stat sr d1"><div class="stat-n">400+</div><div class="stat-l">LeetCode Solved</div></div>
+      <div class="stat sr d2"><div class="stat-n">8.66</div><div class="stat-l">CGPA · CSE</div></div>
+    </div>
+  </div>
+  <div class="hero-bottom">
+    <div class="scroll-c"><div class="scroll-ring">↓</div>Scroll to explore</div>
+    <div class="hero-soc">
+      <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank">LinkedIn</a>
+     <a href="https://github.com/JasmineChabbra" target="_blank">GitHub</a>
+      <a href="https://leetcode.com/Jasmine2003/" target="_blank">LeetCode</a>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-wrap"><div class="mq-track" id="mqtrack"></div></div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-row">
+    <div class="stat-item sr"><div class="stat-big" data-count="5000">2K+</div><div class="stat-txt">Monthly Apps Processed · Income & Expense Tracker</div></div>
+    <div class="stat-item sr d1"><div class="stat-big">70+</div><div class="stat-txt">Reusable Web Components Built</div></div>
+    <div class="stat-item sr d2"><div class="stat-big">40%</div><div class="stat-txt">Query Execution Time Reduced</div></div>
+    <div class="stat-item sr d3"><div class="stat-big">100+</div><div class="stat-txt">Code Vulnerabilities Resolved</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="sec about-sec" id="about">
+  <div class="wrap">
+    <div class="sec-hd sr">
+      <div><div class="sec-lbl">// 01 — About Me</div><h2 class="sec-ttl">WHO <span class="strk">I</span> <span class="gld">AM</span></h2></div>
+      <p class="sec-aside">Backend Developer. Fintech specialist. Problem solver. Building enterprise software that matters.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-left sr">
+        <p>I'm <strong>Jasmine</strong> — a Backend Developer currently working as <em>Associate · Product Engineering at Lentra AI Pvt Ltd</em>.I build APIs and backend services used in banking and loan processing platforms.</p>
+        <p>Specialising in <strong>SpringBoot, Java, PostgreSQL, and microservices architecture</strong>. I've shipped production systems with CIBIL integration, credit risk assessment, and real-time loan processing — the kind of work that has measurable impact.</p>
+        <p>B.E. Computer Science from <strong>Chitkara University with 8.66 CGPA</strong>. 400+ LeetCode problems solved. My work focuses on scalable microservices, secure API integration, and transaction processing systems. Currently working on banking connectors.</p>
+        <div class="tag-cloud" id="tagcloud"></div>
+        <a href="Jasmine_Resume.pdf" target="_blank" class="btn-g" style="margin-top:36px;"><span class="t">Download Resume ↓</span></a>
+      </div>
+      <div class="about-right sr d2" id="xplist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="sec skills-sec" id="skills">
+  <div class="wrap">
+    <div class="sec-hd sr">
+      <div><div class="sec-lbl">// 02 — Skills</div><h2 class="sec-ttl">WHAT I <span class="gld">KNOW</span></h2></div>
+      <p class="sec-aside" style="color:var(--muted)">Full-stack proficiency from database design to pixel-perfect UI.</p>
+    </div>
+    <div class="skills-wrap">
+      <div class="skills-grid" id="skillsgrid"></div>
+      <div class="sk-cats" id="skcats" style="margin-top:3px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="sec proj-sec" id="projects">
+  <div class="wrap">
+    <div class="sec-hd sr">
+      <div><div class="sec-lbl">// 03 — Projects</div><h2 class="sec-ttl">WHAT I <span class="gld">BUILT</span></h2></div>
+      <p class="sec-aside">From enterprise fintech to algorithmic tools — projects with real-world impact.</p>
+    </div>
+    <div class="proj-grid" id="projgrid"></div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section class="sec cert-sec" id="certs">
+  <div class="wrap">
+    <div class="sec-hd sr">
+      <div><div class="sec-lbl">// 04 — Certifications</div><h2 class="sec-ttl">MY <span class="gld">CREDS</span></h2></div>
+      <p class="sec-aside" style="color:var(--muted)">Industry-recognised credentials from Google, Coursera, and more.</p>
+    </div>
+    <div class="cert-grid" id="certgrid"></div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section class="sec ach-sec" id="achievements">
+  <div class="ach-inner wrap">
+    <div class="sec-hd sr" style="padding-top:0">
+      <div><div class="sec-lbl">// 05 — Achievements</div><h2 class="sec-ttl">WINS & <span class="gld">AWARDS</span></h2></div>
+      <p class="sec-aside">Competition results and community impact that set me apart.</p>
+    </div>
+    <div class="ach-list" id="achlist"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec contact-sec" id="contact">
+  <div class="wrap">
+    <div class="sec-hd sr">
+      <div><div class="sec-lbl">// 06 — Contact</div><h2 class="sec-ttl">LET'S <span class="gld">TALK</span></h2></div>
+      <p class="sec-aside" style="color:var(--muted)">Open to exciting roles, collaborations, and conversations.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="sr">
+        <p class="c-headline">Got an exciting opportunity? Let's <strong>create impact together.</strong></p>
+        <div class="c-info-list">
+          <div class="c-row"><div class="c-icon">✉</div><div><div class="c-lbl">Email</div><div class="c-val">chabbrajasmine275@gmail.com</div></div></div>
+          <div class="c-row"><div class="c-icon">📞</div><div><div class="c-lbl">Phone</div><div class="c-val">+91 8168300029</div></div></div>
+          <div class="c-row"><div class="c-icon">📍</div><div><div class="c-lbl">Location</div><div class="c-val">India · Open to Remote & Relocation</div></div></div>
+          <div class="c-row"><div class="c-icon">⚡</div><div><div class="c-lbl">Response Time</div><div class="c-val">Within 24 hours</div></div></div>
+        </div>
+        <div class="c-socs">
+          <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank" class="csoc">LinkedIn</a>
+          <a href="https://github.com/JasmineChabbra" target="_blank" class="csoc">GitHub</a>
+          <a href="https://leetcode.com/u/Jasmine2003" target="_blank" class="csoc">LeetCode</a>
+          <a href="https://www.instagram.com/jasmnchabbra__/" target="_blank" class="csoc">Instagram</a>
+        </div>
+      </div>
+      <div class="sr d2">
+<form class="fform" action="mailto:chabbrajasmine275@gmail.com" method="post" enctype="text/plain">
+              <div class="frow2">
+            <div class="ff" id="ff-name">
+<input type="text" id="f-name" name="name" placeholder=" " autocomplete="off">
+<label class="ff-label" for="f-name">Full Name</label>
+              <span class="ff-ok-icon">✓</span>
+              <div class="ff-err">Please enter your name (min 2 chars)</div>
+            </div>
+            <div class="ff" id="ff-email">
+<input type="email" id="f-email" name="email" placeholder=" " autocomplete="off">
+<label class="ff-label" for="f-email">Email Address</label>
+              <span class="ff-ok-icon">✓</span>
+              <div class="ff-err" id="email-err">Please enter a valid email</div>
+            </div>
+          </div>
+          <div class="ff" id="ff-phone">
+<input type="tel" id="f-phone" name="phone" placeholder=" ">
+<label class="ff-label" for="f-phone">Phone (Optional)</label>
+            <span class="ff-ok-icon">✓</span>
+          </div>
+          <div class="ff" id="ff-subj">
+<input type="text" id="f-subj" name="subject" placeholder=" ">
+<label class="ff-label" for="f-subj">Subject</label>
+            <span class="ff-ok-icon">✓</span>
+            <div class="ff-err">Please enter a subject (min 3 chars)</div>
+          </div>
+          <div class="ff" id="ff-msg">
+<textarea id="f-msg" name="message" rows="5" placeholder=" "></textarea>
+<label class="ff-label" for="f-msg">Your Message</label>
+            <span class="ff-ok-icon">✓</span>
+            <div class="ff-err">Message must be at least 20 characters</div>
+          </div>
+          <p class="form-hint">Your message goes directly to chabbrajasmine275@gmail.com</p>
+          <div class="form-actions">
+            <button type="submit" class="submit-btn" id="submitbtn"><span class="st" id="btntxt">Send Message →</span></button>
+          </div>
+          <div class="form-status" id="fstatus"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a class="f-logo" href="#"><span></span>JASMINE</a>
+  <div class="f-copy">© 2025 JASMINE· Backend Developer</div>
+  <div class="f-links">
+    <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank">LinkedIn</a>
+    <a href="https://github.com/JasmineChabbra" target="_blank">GitHub</a>
+    <a href="https://leetcode.com/u/Jasmine2003/" target="_blank">LeetCode</a>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ── DATA (from resume) ── */
+const TAGS=['Angular 18','StencilJS','Spring Boot','Java','TypeScript','JavaScript','Python','Kotlin','PostgreSQL','MongoDB','AWS','Docker','Node.js','Tailwind CSS','Git','SonarQube'];
+
+const EXPERIENCES=[
+  {
+    role:'Associate · Product Engineering',
+    company:'Lentra AI Pvt Ltd',
+    date:'July 2025 — Present',
+    bullets:[
+      'Implemented secure user authentication, CRUD operations,</strong> and Restful APIs for data management.',
+      'Engineered RESTful APIs (Spring Boot, Java 17) handling requests with <strong>sub-200ms response time</strong>',
+      'Integrated SonarQube — resolved <strong>100+ code vulnerabilities</strong>, improving production quality',
+      'Optimised PostgreSQL queries reducing execution time by <strong>40%</strong> through strategic indexing',
+    ]
+  },
+  {
+    role:'Full Stack Developer · Internship',
+    company:'Lentra AI Pvt Ltd',
+    date:'Oct 2024 — June 2025',
+    bullets:[
+      'Built <strong>Income & Expense Tracker </strong> (FintechSystem) — Angular 18, Spring Boot, PostgreSQL — handling <strong>5,000+ monthly applications</strong>',
+      'Pioneered StencilJS: created <strong>70+ reusable framework-agnostic web components</strong>, boosting dev efficiency by 30%, cutting code duplication by 45%',
+      'Built microservices for loan processing & credit verification with ACID-compliant PostgreSQL schemas',
+      'Improved loan approval rates by <strong>15%</strong> through personalised creditworthiness recommendations',
+    ]
+  },
+];
+
+const SKILLS_BARS=[
+  {n:'Angular 18 / StencilJS',p:75},{n:'Spring Boot / Java',p:90},
+  {n:'TypeScript / JavaScript',p:60},{n:'Python',p:70},
+  {n:'PostgreSQL / MongoDB',p:82},{n:'RESTful APIs / Microservices',p:86},
+  {n:'AWS (EC2, S3) / Docker',p:72},{n:'Kotlin',p:70},
+];
+
+const SKILL_CATS=[
+  {lbl:'Languages',  items:['Java','JavaScript','TypeScript','Python','Kotlin','SQL']},
+  {lbl:'Frontend',   items:['Angular 18','StencilJS','HTML5','CSS3','Tailwind CSS','React']},
+  {lbl:'Backend',    items:['Spring Boot','Node.js','Express.js','RESTful APIs','Microservices']},
+  {lbl:'Database',   items:['PostgreSQL','MongoDB','MySQL']},
+  {lbl:'Cloud & DevOps', items:['AWS EC2','AWS S3','Docker','SonarQube']},
+  {lbl:'Tools',      items:['Git','GitHub','IntelliJ','VSCode','Android Studio','Jupyter']},
+];
+
+const PROJECTS=[
+  {
+    n:'01',title:'Income and Expense Tracker —  Fintech System',
+    tech:'Angular 18 · Spring Boot · PostgreSQL',
+    desc:'Full-stack fintech app with CIBIL integration, credit risk assessment & automated document verification. Processed 2,000+ monthly applications, reduced processing time by 40%.',
+    tags:['Angular','Spring Boot','PostgreSQL','Microservices','CIBIL'],
+    href:'#'
+  },
+  {
+    n:'02',title:'ZipCraft — File Compression Tool',
+    tech:'Java · Algorithms',
+    desc:'Huffman Algorithm implementation reducing file size by 40% and cutting data transfer time by 50% by assigning shorter binary codes to more frequent symbols.',
+    tags:['Java','Huffman','DSA','Compression'],
+    href:'#'
+  },
+  {
+    n:'03',title:'Smart Attendance System',
+    tech:'Python · OpenCV · SQL',
+    desc:'Face recognition-based attendance system achieving 98% accuracy with real-time detection, admin dashboard, and automated report generation.',
+    tags:['Python','OpenCV','SQL','ML','Face Recognition'],
+    href:'#'
+  },
+  {
+    n:'04',title:'Krishi Dost Web App',
+    tech:'HTML · CSS · JavaScript',
+    desc:'Full web application for detecting crop diseases — built under hackathon conditions at Techstars Startup Weekend. Won 3rd place nationally.',
+    tags:['HTML','CSS','JavaScript','UX'],
+    href:'#'
+  },
+];
+
+const CERTS=[
+  {yr:'2024',name:'Advanced Data Structures & Algorithms',org:'Google'},
+  {yr:'2024',name:'Advanced Programming in Kotlin',org:'Coursera'},
+  {yr:'2024',name:'Google Cloud Certified',org:'Google Cloud'},
+];
+
+const ACHIEVEMENTS=[
+  {icon:'🥈',txt:'<strong>2nd Place · University Hackathon</strong> — Built a system to help farmers to detect crop diseases by capturing images through a camera.'},
+  {icon:'🥉',txt:'<strong>3rd Place · Techstars Startup Weekend</strong> — Developed a full  Online Shopping Web App (HTML, CSS, JS) in 54 hours.'},
+  {icon:'⚔️',txt:'<strong>400+ LeetCode Problems Solved</strong> — Consistent competitive programmer with strong DSA fundamentals.'},
+];
+
+const MQ_ITEMS=['Angular 18','Spring Boot','StencilJS','PostgreSQL','Microservices','Java 17','AWS','Docker','TypeScript','CIBIL Integration','RESTful APIs','Kotlin'];
+const TYPED=['Full Stack Developer','Angular Specialist','Java Engineer','Problem Solver','Fintech Builder'];
+
+/* ── LOADER ── */
+const lleEl=document.getElementById('lletters');
+'JASMINE'.split('').forEach((ch,i)=>{
+  const s=document.createElement('span');
+  s.textContent=ch===' '?'\u00a0':ch;
+  if(i<6)s.classList.add('g');
+  s.style.animationDelay=(i*.042)+'s';
+  lleEl.appendChild(s);
+});
+let pv=0; const lpEl=document.getElementById('lpct');
+const pInt=setInterval(()=>{ pv=Math.min(pv+Math.random()*5,95); lpEl.textContent=Math.floor(pv)+'%'; },80);
+window.addEventListener('load',()=>{
+  clearInterval(pInt); lpEl.textContent='100%';
+  setTimeout(()=>{
+    const l=document.getElementById('loader');
+    l.style.transition='opacity .5s ease,transform .5s ease';
+    l.style.opacity='0'; l.style.transform='translateY(-16px)';
+    setTimeout(()=>{ l.style.display='none'; document.getElementById('heroH1').classList.add('go'); setTimeout(startTyped,500); },550);
+  },1900);
+});
+
+/* ── CURSOR ── */
+const cd=document.getElementById('cd'),cr=document.getElementById('cr');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cd.style.left=mx+'px'; cd.style.top=my+'px'; });
+(function loop(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; cr.style.left=rx+'px'; cr.style.top=ry+'px'; requestAnimationFrame(loop); })();
+document.querySelectorAll('a,button,.proj-card,.cert-card,.stat-item,.xp-card,.ach-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
+
+/* ── NAV ── */
+const navEl=document.getElementById('nav'),navAs=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  navEl.classList.toggle('stuck',scrollY>60);
+  let cur='';
+  document.querySelectorAll('section[id]').forEach(s=>{ if(scrollY>=s.offsetTop-200)cur=s.id; });
+  navAs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+  document.getElementById('bgW').style.transform=`translateY(${scrollY*.18}px)`;
+  observeAll();
+});
+
+/* ── HAM ── */
+const ham=document.getElementById('ham'),fm=document.getElementById('fmenu');
+let mo=false;
+ham.addEventListener('click',()=>{
+  mo=!mo; fm.classList.toggle('open',mo);
+  const[a,b,c]=ham.querySelectorAll('span');
+  if(mo){a.style.transform='rotate(45deg) translateY(6.5px)';b.style.opacity='0';c.style.transform='rotate(-45deg) translateY(-6.5px)';}
+  else{a.style.transform='';b.style.opacity='1';c.style.transform='';}
+});
+fm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  mo=false;fm.classList.remove('open');
+  ham.querySelectorAll('span').forEach(s=>{s.style.transform='';s.style.opacity='1';});
+}));
+
+/* ── TYPED ── */
+let wi=0,ci=0,del=false;
+const typEl=document.getElementById('typed-el');
+function startTyped(){
+  (function t(){
+    const w=TYPED[wi];
+    if(!del){typEl.textContent=w.slice(0,++ci);if(ci===w.length){del=true;setTimeout(t,1500);return;}}
+    else{typEl.textContent=w.slice(0,--ci);if(ci===0){del=false;wi=(wi+1)%TYPED.length;}}
+    setTimeout(t,del?38:72);
+  })();
+}
+
+/* ── MARQUEE ── */
+const mqt=document.getElementById('mqtrack');
+[...MQ_ITEMS,...MQ_ITEMS].forEach(txt=>{
+  const s=document.createElement('span');s.className='mq-item';
+  s.innerHTML=txt+'<span class="mq-dot">✦</span>';mqt.appendChild(s);
+});
+
+/* ── BUILD TAGS ── */
+const tc=document.getElementById('tagcloud');
+TAGS.forEach(t=>{ const d=document.createElement('div');d.className='atag';d.textContent=t;tc.appendChild(d); });
+
+/* ── BUILD EXPERIENCE ── */
+const xl=document.getElementById('xplist');
+EXPERIENCES.forEach(e=>{
+  xl.innerHTML+=`<div class="xp-card">
+    <div class="xp-top"><div class="xp-role">${e.role}</div><div class="xp-date">${e.date}</div></div>
+    <div class="xp-company">${e.company}</div>
+    <ul class="xp-bullets">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+  </div>`;
+});
+
+/* ── BUILD SKILLS ── */
+const sg=document.getElementById('skillsgrid');
+SKILLS_BARS.forEach(s=>{
+  sg.innerHTML+=`<div class="sk-row sr">
+    <div class="sk-top"><div class="sk-name">${s.n}</div><div class="sk-pct">${s.p}%</div></div>
+    <div class="sk-bar"><div class="sk-fill" data-w="${s.p}"></div></div>
+  </div>`;
+});
+const sc=document.getElementById('skcats');
+SKILL_CATS.forEach(c=>{
+  sc.innerHTML+=`<div class="sk-cat sr">
+    <div class="sk-cat-lbl">${c.lbl}</div>
+    <div class="sk-cat-items">${c.items.map(i=>`<span class="sk-chip">${i}</span>`).join('')}</div>
+  </div>`;
+});
+
+/* ── BUILD PROJECTS ── */
+const pg=document.getElementById('projgrid');
+PROJECTS.forEach(p=>{
+  pg.innerHTML+=`<a class="proj-card sr" href="${p.href}">
+    <div class="proj-top"><div class="proj-num">${p.n}</div><div class="proj-arr">↗</div></div>
+    <div>
+      <div class="proj-ttl">${p.title}</div>
+      <div class="proj-tech">${p.tech}</div>
+      <div class="proj-desc">${p.desc}</div>
+      <div class="proj-tags">${p.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+    </div>
+  </a>`;
+});
+
+/* ── BUILD CERTS ── */
+const cg=document.getElementById('certgrid');
+CERTS.forEach(c=>{
+  cg.innerHTML+=`<div class="cert-card sr"><div class="cert-yr">${c.yr}</div><div class="cert-name">${c.name}</div><div class="cert-org">${c.org}</div></div>`;
+});
+
+/* ── BUILD ACHIEVEMENTS ── */
+const al=document.getElementById('achlist');
+ACHIEVEMENTS.forEach(a=>{
+  al.innerHTML+=`<div class="ach-item sr"><div class="ach-icon">${a.icon}</div><div class="ach-txt">${a.txt}</div></div>`;
+});
+
+/* ── SCROLL REVEAL ── */
+const srObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('vis');srObs.unobserve(e.target);} });
+},{threshold:0.1});
+function observeAll(){ document.querySelectorAll('.sr:not(.vis)').forEach(el=>srObs.observe(el)); }
+observeAll(); setTimeout(observeAll,200);
+
+/* ── SKILL BARS ── */
+const barObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.sk-fill').forEach(f=>{ setTimeout(()=>f.style.width=f.dataset.w+'%',200); });
+      barObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.2});
+setTimeout(()=>document.querySelectorAll('.sk-row').forEach(el=>barObs.observe(el)),200);
+
+/* ── FORM VALIDATION ── */
+/* ⚠️  EmailJS Setup (free — 2 min):
+   1. emailjs.com → sign up → Add Gmail service → copy SERVICE_ID
+   2. Create template with: {{from_name}} {{from_email}} {{phone}} {{subject}} {{message}}
+   3. Copy TEMPLATE_ID & PUBLIC_KEY → paste below                              */
+const EJ_KEY ='YOUR_PUBLIC_KEY';
+const EJ_SVC ='YOUR_SERVICE_ID';
+const EJ_TPL ='YOUR_TEMPLATE_ID';
+try{ emailjs.init(EJ_KEY); }catch(e){}
+
+const fName=document.getElementById('f-name'),fEmail=document.getElementById('f-email'),
+      fPhone=document.getElementById('f-phone'),fSubj=document.getElementById('f-subj'),
+      fMsg=document.getElementById('f-msg'),subBtn=document.getElementById('submitbtn'),
+      btnTxt=document.getElementById('btntxt'),fStatus=document.getElementById('fstatus');
+
+function setFF(id,valid,errTxt){
+  const el=document.getElementById('ff-'+id);
+  el.classList.remove('err','ok');
+  el.classList.add(valid?'ok':'err');
+  if(!valid&&errTxt){ const e=el.querySelector('.ff-err'); if(e)e.textContent=errTxt; }
+  return valid;
+}
+function clearFF(id){ const el=document.getElementById('ff-'+id); if(el)el.classList.remove('err','ok'); }
+function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+// Live validation
+fName.addEventListener('input',()=>{ const v=fName.value.trim(); if(v)setFF('name',v.length>=2,'Min 2 characters'); else clearFF('name'); });
+fEmail.addEventListener('input',()=>{ const v=fEmail.value.trim(); if(v)setFF('email',isEmail(v),isEmail(v)?'':'Invalid email format'); else clearFF('email'); });
+fPhone.addEventListener('input',()=>{ const v=fPhone.value.trim(); if(v)setFF('phone',/^[0-9+\-\s()]{7,15}$/.test(v),'Invalid phone'); });
+fSubj.addEventListener('input',()=>{ const v=fSubj.value.trim(); if(v)setFF('subj',v.length>=3,'Min 3 characters'); else clearFF('subj'); });
+fMsg.addEventListener('input',()=>{ const v=fMsg.value.trim(); if(v)setFF('msg',v.length>=20,'Min 20 characters'); else clearFF('msg'); });
+
+function validateAll(){
+  const n=fName.value.trim(),em=fEmail.value.trim(),s=fSubj.value.trim(),m=fMsg.value.trim();
+  let ok=true;
+  if(!setFF('name',n.length>=2,n?'Min 2 characters':'Name is required'))ok=false;
+  if(!setFF('email',isEmail(em),em?'Invalid email format':'Email is required'))ok=false;
+  if(!setFF('subj',s.length>=3,s?'Min 3 characters':'Subject is required'))ok=false;
+  if(!setFF('msg',m.length>=20,m?'Min 20 characters, currently '+m.length:'Message is required'))ok=false;
+  return ok;
+}
+
+document.getElementById('cform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  fStatus.className='form-status'; fStatus.style.display='none';
+  if(!validateAll()){ fStatus.textContent='⚠ Please fix the errors above before sending.'; fStatus.className='form-status fail'; return; }
+  subBtn.disabled=true; btnTxt.textContent='Sending...';
+  const params={from_name:fName.value.trim(),from_email:fEmail.value.trim(),phone:fPhone.value.trim()||'Not provided',subject:fSubj.value.trim(),message:fMsg.value.trim(),to_email:'chabbrajasmine275@gmail.com'};
+  if(EJ_KEY==='YOUR_PUBLIC_KEY'){
+    await new Promise(r=>setTimeout(r,1400));
+    fStatus.textContent='✓ Demo mode! Configure EmailJS keys to enable real email delivery to chabbrajasmine275@gmail.com';
+    fStatus.className='form-status success';
+    subBtn.disabled=false; btnTxt.textContent='Send Message →'; return;
+  }
+  try{
+    await emailjs.send(EJ_SVC,EJ_TPL,params);
+    fStatus.textContent='✓ Message sent! I\'ll reply within 24 hours — chabbrajasmine275@gmail.com';
+    fStatus.className='form-status success';
+    document.getElementById('cform').reset();
+    ['name','email','phone','subj','msg'].forEach(id=>clearFF(id));
+    btnTxt.textContent='Send Message →';
+  }catch(err){
+    fStatus.textContent='✗ Failed to send. Please email chabbrajasmine275@gmail.com directly or try again.';
+    fStatus.className='form-status fail';
+    btnTxt.textContent='Send Message →';
+  }
+  subBtn.disabled=false;
+});
+</script>
+</body>
+</html>
