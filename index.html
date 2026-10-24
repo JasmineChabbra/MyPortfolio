@@ -115,7 +115,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* ---------- top bar ---------- */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--card);border-bottom:1px solid var(--line)}
 .topbar-in{
-  max-width:1128px;margin:0 auto;display:flex;align-items:center;gap:12px;
+  max-width:1360px;margin:0 auto;display:flex;align-items:center;gap:12px;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:8px;
@@ -135,7 +135,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* ---------- column ---------- */
 .shell{
-  max-width:1128px;margin:0 auto;
+  max-width:1360px;margin:0 auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:16px 52px;
@@ -143,9 +143,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 }
 .page{display:flex;flex-direction:column;gap:12px;min-width:0}
 .rail{display:none;flex-direction:column;gap:12px;min-width:0}
-@media (min-width:1080px){
-  .shell{grid-template-columns:minmax(0,1fr) 308px}
+@media (min-width:980px){
+  .shell{grid-template-columns:minmax(0,1fr) 316px;gap:20px}
   .rail{display:flex;position:sticky;top:78px}
+}
+@media (min-width:1400px){
+  .shell{grid-template-columns:minmax(0,1fr) 352px;gap:24px}
 }
 .rail h3{font-size:14px;font-weight:700;margin:0 0 11px}
 .glance{display:flex;flex-direction:column;gap:9px}
@@ -373,6 +376,9 @@ h2.sec{font-size:19px;font-weight:700;letter-spacing:-.005em;margin:0 0 15px}
 .flowfig .scroller{overflow-x:auto;max-width:100%}
 .flowfig svg{display:block;width:100%;min-width:520px;height:auto}
 .flowfig figcaption{font-size:12px;color:var(--ink-2);margin-top:9px;line-height:1.5}
+
+/* keep running text readable even when the column gets wide */
+#about p, .prj-sum, .hard p, .pts li, .sk p, .flowfig figcaption{max-width:86ch}
 
 footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
 
