@@ -1,840 +1,1064 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jasmine — Backend Developer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jasmine Chabbra — Backend Engineer</title>
+<meta name="description" content="Backend engineer at Lentra. Java, Spring Boot and REST APIs for digital lending, with open-source services for credit underwriting, payment fraud detection and payout orchestration.">
+<meta name="author" content="Jasmine Chabbra">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/105035591?v=4&amp;s=64">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Jasmine Chabbra — Backend Engineer">
+<meta property="og:description" content="Java and Spring Boot for digital lending at Lentra. Open-source services for credit underwriting, payment fraud detection and payout orchestration.">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/105035591?v=4&amp;s=480">
+<meta name="twitter:card" content="summary">
 <style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* Layout: a profile page — stacked cards on a warm grey canvas, one measured column, sticky bar with scroll-spy */
 :root{
-  --bg:#09090b;--surface:#111113;--surface2:#18181b;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --text:#f4f0e8;--muted:rgba(244,240,232,0.42);
-  --accent:#f0c040;--red:#e05c45;--green:#4ade80;
-  --grad:linear-gradient(135deg,#f0c040,#e05c45);
+  --canvas:#F4F2EE;
+  --card:#FFFFFF;
+  --card-2:#F3F2EF;
+  --ink:rgba(0,0,0,.90);
+  --ink-2:rgba(0,0,0,.60);
+  --ink-3:rgba(0,0,0,.45);
+  --line:rgba(0,0,0,.09);
+  --line-2:rgba(0,0,0,.16);
+  --blue:#0A66C2;
+  --blue-ink:#0A66C2;
+  --blue-hover:#004182;
+  --blue-wash:rgba(10,102,194,.07);
+  --solid-fg:#FFFFFF;
+  --banner-a:#13243A;
+  --banner-b:#1F3B59;
+  --ok:#0B7A5A;
+  --shadow:0 1px 2px rgba(0,0,0,.06);
+  --shadow-up:0 4px 14px rgba(0,0,0,.09);
+  --good:#0B7A5A;
+  --warn:#8A5A00;
+  --bad:#B42318;
+
+  --font:'Source Sans 3','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;cursor:none;}
-::selection{background:var(--accent);color:#000;}
-a{text-decoration:none;color:inherit;}
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:var(--accent);}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --canvas:#13171A;
+    --card:#1D2226;
+    --card-2:#272C30;
+    --ink:rgba(255,255,255,.92);
+    --ink-2:rgba(255,255,255,.62);
+    --ink-3:rgba(255,255,255,.46);
+    --line:rgba(255,255,255,.12);
+    --line-2:rgba(255,255,255,.22);
+    --blue:#70B5F9;
+    --blue-ink:#70B5F9;
+    --blue-hover:#A9D2FB;
+    --blue-wash:rgba(112,181,249,.11);
+    --solid-fg:#0B1016;
+    --banner-a:#0D1826;
+    --banner-b:#16293E;
+    --ok:#4FC79A;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --shadow-up:0 4px 16px rgba(0,0,0,.5);
+    --good:#4FC79A;
+    --warn:#E3B341;
+    --bad:#F98080;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#13171A;
+  --card:#1D2226;
+  --card-2:#272C30;
+  --ink:rgba(255,255,255,.92);
+  --ink-2:rgba(255,255,255,.62);
+  --ink-3:rgba(255,255,255,.46);
+  --line:rgba(255,255,255,.12);
+  --line-2:rgba(255,255,255,.22);
+  --blue:#70B5F9;
+  --blue-ink:#70B5F9;
+  --blue-hover:#A9D2FB;
+  --blue-wash:rgba(112,181,249,.11);
+  --solid-fg:#0B1016;
+  --banner-a:#0D1826;
+  --banner-b:#16293E;
+  --ok:#4FC79A;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --shadow-up:0 4px 16px rgba(0,0,0,.5);
+  --good:#4FC79A;
+  --warn:#E3B341;
+  --bad:#F98080;
+  color-scheme:dark;
+}
 
-/* ── CURSOR ── */
-#cd{position:fixed;width:9px;height:9px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s;}
-#cr{position:fixed;width:42px;height:42px;border:1px solid rgba(240,192,64,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
-body.hov #cd{width:18px;height:18px;}
-body.hov #cr{width:62px;height:62px;border-color:var(--accent);}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  margin:0;background:var(--canvas);color:var(--ink);
+  font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+a{color:var(--blue-ink)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--card)}
 
-/* ── NOISE ── */
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:1;}
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--card);border-bottom:1px solid var(--line)}
+.topbar-in{
+  max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:8px;
+}
+.tb-mark{display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit;flex:0 0 auto;max-width:50%;overflow:hidden}
+.tb-mark img{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
+.tb-name{font-weight:700;font-size:14.5px;line-height:1.15;white-space:nowrap;display:block;overflow:hidden;text-overflow:ellipsis}
+.tb-role{font-size:11.5px;color:var(--ink-2);line-height:1.2;white-space:nowrap;display:block}
+.tb-nav{margin-left:auto;display:flex;gap:1px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto;justify-content:flex-end}
+.tb-nav::-webkit-scrollbar{display:none}
+.tb-nav a{
+  font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 9px;border-radius:5px;
+  white-space:nowrap;transition:background .15s ease,color .15s ease;
+}
+.tb-nav a:hover{background:var(--card-2);color:var(--ink)}
+.tb-nav a.on{color:var(--blue-ink);background:var(--blue-wash);font-weight:600}
 
-/* ── LOADER ── */
-#loader{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
-.ld-letters{display:flex;overflow:hidden;}
-.ld-letters span{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,110px);letter-spacing:.07em;color:transparent;-webkit-text-stroke:1px rgba(244,240,232,.12);display:inline-block;transform:translateY(120%) skewY(6deg);animation:lUp .65s cubic-bezier(.16,1,.3,1) forwards;}
-.ld-letters span.g{-webkit-text-stroke-color:var(--accent);}
-@keyframes lUp{to{transform:translateY(0) skewY(0);}}
-.ld-bar-wrap{width:200px;height:1px;background:var(--border);overflow:hidden;position:relative;}
-.ld-bar-fill{position:absolute;inset:0;background:var(--grad);transform:translateX(-100%);animation:barIn 1.8s cubic-bezier(.16,1,.3,1) .3s forwards;}
-@keyframes barIn{to{transform:translateX(0);}}
-.ld-pct{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:var(--muted);}
+/* ---------- column ---------- */
+.page{
+  max-width:760px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:16px 52px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.card-pad{padding:22px}
+h2.sec{font-size:19px;font-weight:700;letter-spacing:-.005em;margin:0 0 15px}
 
-/* ── NAV ── */
-#nav{position:fixed;top:0;left:0;right:0;z-index:500;height:70px;padding:0 60px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s;border-bottom:1px solid transparent;}
-#nav.stuck{background:rgba(9,9,11,.88);backdrop-filter:blur(20px);border-bottom-color:var(--border);}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em;}
-.nav-logo span{color:var(--accent);}
-.nav-links{display:flex;gap:36px;list-style:none;}
-.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .3s;position:relative;padding-bottom:2px;}
-.nav-links a::before{content:attr(data-i);color:var(--accent);font-size:.48rem;vertical-align:super;margin-right:3px;}
-.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
-.nav-links a:hover,.nav-links a.on{color:var(--text);}
-.nav-links a:hover::after,.nav-links a.on::after{transform:scaleX(1);}
-.nav-cta{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);padding:9px 20px;background:transparent;cursor:pointer;transition:all .3s;}
-.nav-cta:hover{background:var(--accent);color:#000;}
-.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;}
-.ham span{width:26px;height:1.5px;background:var(--text);transition:all .35s;}
+/* ---------- profile ---------- */
+.banner{
+  height:164px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 150% at 88% 15%, rgba(94,164,255,.26) 0%, transparent 58%),
+    radial-gradient(90% 120% at 8% 95%, rgba(28,196,154,.16) 0%, transparent 60%),
+    linear-gradient(118deg,var(--banner-a) 0%, var(--banner-b) 58%, #24476B 100%);
+}
+.banner::after{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(100deg, rgba(0,0,0,.9), rgba(0,0,0,.25));
+  -webkit-mask-image:linear-gradient(100deg, rgba(0,0,0,.9), rgba(0,0,0,.25));
+}
+.banner .pipe{position:absolute;right:16px;top:50%;transform:translateY(-50%);height:96px;z-index:1;pointer-events:none}
+.banner .tok{opacity:0}
+@media (prefers-reduced-motion: no-preference){
+  .banner .tok{animation:flow 6s cubic-bezier(.65,0,.35,1) infinite}
+  @keyframes flow{
+    0%{transform:translateX(0);opacity:0}
+    8%{transform:translateX(14px);opacity:1}
+    30%{transform:translateX(96px)}
+    38%{transform:translateX(104px)}
+    60%{transform:translateX(190px)}
+    68%{transform:translateX(198px)}
+    90%{transform:translateX(300px);opacity:1}
+    100%{transform:translateX(316px);opacity:0}
+  }
+}
+.banner code{
+  position:absolute;left:22px;top:20px;z-index:2;
+  font-family:var(--mono);font-size:11.5px;color:rgba(255,255,255,.52);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 44px);
+}
+.banner code b{color:rgba(255,255,255,.85);font-weight:500}
+.pro-body{padding:0 22px 22px}
+.avatar{
+  width:130px;height:130px;border-radius:50%;margin-top:-66px;display:block;object-fit:cover;
+  position:relative;z-index:3;
+  border:5px solid var(--card);background:var(--card-2);
+  box-shadow:0 0 0 1px var(--line), 0 8px 22px rgba(0,0,0,.22);
+}
+.pro-name{font-size:clamp(24px,4.6vw,28px);font-weight:700;letter-spacing:-.018em;margin:12px 0 3px}
+.pro-pronoun{font-size:13.5px;color:var(--ink-3);font-weight:400}
+.pro-head{font-size:15.5px;line-height:1.45;margin:0 0 9px;max-width:58ch}
+.pro-meta{font-size:13.5px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:3px 7px;align-items:center}
+.pro-meta a{text-decoration:none;font-weight:600}
+.pro-meta a:hover{text-decoration:underline}
+.open-pill{
+  display:flex;align-items:flex-start;gap:9px;margin:12px 0 0;
+  background:var(--blue-wash);border:1px solid var(--line);border-radius:8px;padding:10px 13px;font-size:13.5px;
+}
+.open-pill b{font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none;margin-top:5px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.btn{
+  font-size:14px;font-weight:600;text-decoration:none;border-radius:20px;padding:7px 16px;
+  border:1px solid var(--line-2);color:var(--ink);background:transparent;
+  transition:background .15s ease,border-color .15s ease;display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{background:var(--card-2)}
+.btn.solid{background:var(--blue);border-color:var(--blue);color:var(--solid-fg)}
+.btn.solid:hover{background:var(--blue-hover);border-color:var(--blue-hover);color:var(--solid-fg)}
+.orgs{display:flex;flex-wrap:wrap;gap:9px 20px;margin-top:17px;padding-top:15px;border-top:1px solid var(--line)}
+.org{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600}
+.org i{
+  width:26px;height:26px;border-radius:5px;display:grid;place-items:center;flex:none;
+  background:var(--card-2);border:1px solid var(--line);
+  font-family:var(--mono);font-size:10.5px;font-style:normal;font-weight:600;color:var(--ink-2);
+}
 
-/* ── FULLSCREEN MENU ── */
-#fmenu{position:fixed;inset:0;background:var(--bg);z-index:490;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;clip-path:circle(0% at calc(100% - 42px) 35px);transition:clip-path .7s cubic-bezier(.16,1,.3,1);}
-#fmenu.open{clip-path:circle(150% at calc(100% - 42px) 35px);}
-#fmenu a{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4.5rem);letter-spacing:.07em;color:rgba(244,240,232,.15);transition:color .3s;}
-#fmenu.open a{color:rgba(244,240,232,.18);}
-#fmenu a:hover{color:var(--accent);}
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:1px;background:var(--line)}
+.stat{background:var(--card);padding:17px 19px}
+.stat b{display:block;font-size:27px;font-weight:700;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.08}
+.stat span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:4px;line-height:1.4}
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:grid;grid-template-rows:1fr auto;padding:0 60px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:72px 72px;pointer-events:none;}
-.hero::after{content:'';position:absolute;top:-300px;right:-200px;width:750px;height:750px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.07) 0%,transparent 68%);pointer-events:none;animation:breathe 7s ease infinite;}
-@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-.hero-inner{display:flex;align-items:center;padding-top:70px;gap:48px;}
-.hero-left{flex:1;}
-.badge{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(240,192,64,.25);padding:7px 16px 7px 12px;border-radius:100px;margin-bottom:36px;opacity:0;animation:fu .8s ease 2.1s both;}
-.badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:bl 2s infinite;}
-@keyframes bl{0%,100%{opacity:1;}50%{opacity:.25;}}
-.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(66px,10vw,148px);line-height:.87;letter-spacing:.02em;overflow:hidden;}
-.hero-h1 .row{display:block;overflow:hidden;}
-.hero-h1 .row span{display:block;transform:translateY(112%) skewY(4deg);transition:transform 1s cubic-bezier(.16,1,.3,1);}
-.hero-h1.go .row:nth-child(1) span{transform:translateY(0) skewY(0);transition-delay:.04s;}
-.hero-h1.go .row:nth-child(2) span{transform:translateY(0) skewY(0);transition-delay:.14s;}
-.hero-h1.go .row:nth-child(3) span{transform:translateY(0) skewY(0);transition-delay:.24s;}
-.hero-h1 .strk{-webkit-text-stroke:2px var(--text);color:transparent;}
-.hero-h1 .gld{color:var(--accent);}
-.hero-sub{margin-top:24px;font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--muted);letter-spacing:.04em;opacity:0;animation:fu .8s ease 2.4s both;}
-.hero-sub .tw{color:var(--accent);}
-.hero-sub .cb{display:inline-block;width:2px;height:.85em;background:var(--accent);vertical-align:middle;margin-left:2px;animation:bl .8s infinite;}
-.hero-btns{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap;opacity:0;animation:fu .8s ease 2.6s both;}
-.btn-g{background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:15px 36px;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;position:relative;overflow:hidden;display:inline-block;}
-.btn-g::before{content:'';position:absolute;inset:0;background:#000;transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1);}
-.btn-g:hover::before{transform:scaleX(1);}
-.btn-g .t{position:relative;z-index:1;}
-.btn-g:hover .t{color:var(--accent);}
-.btn-o{background:transparent;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px 36px;border:1px solid var(--border2);cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;display:inline-block;}
-.btn-o:hover{border-color:var(--accent);color:var(--accent);}
-.hero-right{display:flex;flex-direction:column;gap:14px;width:200px;flex-shrink:0;align-self:flex-end;padding-bottom:60px;opacity:0;animation:fr .9s ease 2.8s both;}
-@keyframes fr{from{opacity:0;transform:translateX(28px);}to{opacity:1;transform:translateX(0);}}
-.stat{background:var(--surface);border:1px solid var(--border);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .3s;}
-.stat:hover{border-color:var(--accent);}
-.stat::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--grad);transition:height .5s;}
-.stat:hover::before{height:100%;}
-.stat-n{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
-.stat-l{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
-.hero-bottom{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-top:1px solid var(--border);opacity:0;animation:fu .6s ease 3s both;}
-.scroll-c{display:flex;align-items:center;gap:11px;font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
-.scroll-ring{width:26px;height:26px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55rem;animation:bob 2.5s ease infinite;}
-@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
-.hero-soc{display:flex;gap:16px;}
-.hero-soc a{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .3s;display:flex;align-items:center;gap:4px;}
-.hero-soc a::before{content:'↗';color:var(--accent);font-size:.5rem;}
-.hero-soc a:hover{color:var(--accent);}
-.bg-word{position:absolute;bottom:-50px;right:-40px;font-family:'Bebas Neue',sans-serif;font-size:clamp(120px,18vw,260px);color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.03);pointer-events:none;user-select:none;will-change:transform;line-height:1;}
+/* ---------- see more ---------- */
+.clamp .more{display:none}
+.clamp.open .more{display:block}
+.seemore{
+  background:none;border:none;padding:6px 0 0;margin:0;cursor:pointer;
+  font-family:inherit;font-size:14px;font-weight:600;color:var(--ink-2);
+}
+.seemore:hover{color:var(--ink);text-decoration:underline}
 
-@keyframes fu{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+/* ---------- lists / tags ---------- */
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.pts li{position:relative;padding-left:16px;font-size:14.5px;line-height:1.55}
+.pts li::before{content:"";position:absolute;left:0;top:.66em;width:6px;height:1px;background:var(--ink-3)}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:13px}
+.tag{font-size:12px;border:1px solid var(--line-2);border-radius:12px;padding:2px 9px;color:var(--ink-2)}
+.tag.key{border-color:var(--blue);color:var(--blue-ink);background:var(--blue-wash)}
 
-/* ── MARQUEE ── */
-.mq-wrap{overflow:hidden;background:var(--accent);padding:13px 0;position:relative;z-index:2;}
-.mq-track{display:flex;width:max-content;animation:mq 28s linear infinite;}
-.mq-item{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;color:#000;padding:0 32px;white-space:nowrap;}
-.mq-dot{margin:0 8px;opacity:.35;}
-@keyframes mq{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+/* ---------- experience ---------- */
+.xp{display:flex;gap:13px;padding-block:17px;border-top:1px solid var(--line)}
+.xp:first-of-type{border-top:none;padding-top:0}
+.xp-logo{
+  width:46px;height:46px;flex:none;border-radius:7px;display:grid;place-items:center;
+  background:var(--card-2);border:1px solid var(--line);font-weight:700;font-size:15px;color:var(--ink-2);
+}
+.xp-main{min-width:0;flex:1}
+.xp-role{font-size:16px;font-weight:700;margin:0 0 1px;letter-spacing:-.006em}
+.xp-co{font-size:14px;margin-bottom:1px}
+.xp-when{font-size:13px;color:var(--ink-2);margin-bottom:11px}
 
-/* ── SECTION BASE ── */
-.sec{position:relative;z-index:2;}
-.wrap{max-width:1300px;margin:0 auto;padding:0 60px;}
-.sec-hd{display:flex;justify-content:space-between;align-items:flex-end;padding:88px 0 60px;border-bottom:1px solid var(--border);margin-bottom:64px;}
-.sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
-.sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,5.5vw,84px);letter-spacing:.04em;line-height:.92;}
-.sec-ttl .strk{-webkit-text-stroke:1.5px rgba(244,240,232,.2);color:transparent;}
-.sec-ttl .gld{color:var(--accent);}
-.sec-aside{max-width:260px;font-size:.82rem;color:var(--muted);line-height:1.8;text-align:right;}
+/* ---------- featured ---------- */
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px}
+.feat a{
+  display:flex;flex-direction:column;gap:7px;text-decoration:none;color:inherit;min-width:0;
+  border:1px solid var(--line);border-radius:9px;padding:15px;background:var(--card);
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.feat a:hover{transform:translateY(-2px);box-shadow:var(--shadow-up);border-color:var(--line-2)}
+.feat .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.feat .t{font-weight:700;font-size:15.5px;line-height:1.3}
+.feat .d{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.feat .go{font-size:13px;font-weight:600;color:var(--blue-ink);margin-top:auto}
 
-/* ── ABOUT ── */
-.about-sec{background:var(--surface);}
-.about-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:80px;padding-bottom:90px;}
-.about-left p{font-family:'Lora',serif;font-size:1.08rem;line-height:1.88;color:rgba(244,240,232,.72);margin-bottom:22px;}
-.about-left p strong{color:var(--accent);font-weight:600;}
-.about-left p em{color:var(--green);font-style:normal;font-weight:600;}
-.tag-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;}
-.atag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:7px 13px;color:var(--muted);cursor:default;transition:all .3s;}
-.atag:hover{border-color:var(--accent);color:var(--accent);}
-.about-right{display:flex;flex-direction:column;}
+/* ---------- projects ---------- */
+.prj{padding-block:19px;border-top:1px solid var(--line)}
+.prj:first-of-type{border-top:none;padding-top:0}
+.prj-top{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:4px}
+.prj-top h3{font-size:16.5px;font-weight:700;margin:0;letter-spacing:-.008em}
+.prj-top .when{font-size:12.5px;color:var(--ink-3);margin-left:auto}
+.prj-sum{font-size:14.5px;line-height:1.58;margin:0 0 12px}
+.note{border-left:3px solid var(--blue);background:var(--blue-wash);padding:11px 14px;border-radius:0 6px 6px 0;margin:0 0 13px}
+.note b{display:block;font-size:12.5px;font-weight:700;color:var(--blue-ink);margin-bottom:4px}
+.note p{margin:0;font-size:14px;line-height:1.56}
+.prj-link{display:inline-block;margin-top:12px;font-size:13.5px;font-weight:600;text-decoration:none}
+.prj-link:hover{text-decoration:underline}
+.prj code,.pts code{font-family:var(--mono);font-size:.87em;background:var(--card-2);border:1px solid var(--line);border-radius:3px;padding:1px 4px}
 
-/* EXPERIENCE CARD */
-.xp-card{border:1px solid var(--border);padding:28px 28px 28px 24px;margin-bottom:3px;position:relative;overflow:hidden;transition:border-color .4s;cursor:default;}
-.xp-card:hover{border-color:rgba(240,192,64,.3);}
-.xp-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);transition:width .4s;}
-.xp-card:hover::before{width:3px;}
-.xp-card:hover{padding-left:30px;}
-.xp-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:6px;}
-.xp-role{font-family:'Outfit',sans-serif;font-weight:700;font-size:.98rem;color:var(--text);}
-.xp-date{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;margin-left:12px;margin-top:3px;}
-.xp-company{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-.xp-bullets{list-style:none;display:flex;flex-direction:column;gap:7px;}
-.xp-bullets li{font-size:.82rem;color:rgba(244,240,232,.6);line-height:1.6;padding-left:16px;position:relative;}
-.xp-bullets li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:.65rem;}
-.xp-bullets li strong{color:var(--accent);font-weight:600;}
+/* ---------- skills ---------- */
+.sk{display:flex;gap:13px;padding-block:15px;border-top:1px solid var(--line)}
+.sk:first-of-type{border-top:none;padding-top:0}
+.sk-badge{
+  width:42px;height:42px;flex:none;border-radius:8px;display:grid;place-items:center;
+  background:var(--blue-wash);border:1px solid var(--line);
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--blue-ink);
+}
+.sk h3{font-size:15px;font-weight:700;margin:0 0 3px}
+.sk p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.sk .list{font-size:13.5px;margin-top:6px}
 
-/* ── STATS STRIP ── */
-.stats-strip{background:var(--bg);padding:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);}
-.stat-item{padding:40px 32px;border-right:1px solid var(--border);text-align:center;cursor:default;transition:background .3s;}
-.stat-item:last-child{border-right:none;}
-.stat-item:hover{background:var(--surface);}
-.stat-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
-.stat-txt{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+/* ---------- education / contact ---------- */
+.edu{display:flex;gap:13px}
+.edu h3{font-size:16px;font-weight:700;margin:0 0 2px}
+.edu p{margin:0;font-size:14px;color:var(--ink-2)}
+.cinfo{display:flex;flex-direction:column;gap:12px}
+.crow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14.5px}
+.clabel{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);min-width:78px}
+.cval{font-family:var(--mono);font-size:13.5px;user-select:all;background:var(--card-2);border:1px solid var(--line);border-radius:5px;padding:5px 9px}
+.copy{
+  font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink-2);
+  border:1px solid var(--line-2);border-radius:14px;padding:5px 12px;background:transparent;
+}
+.copy:hover{background:var(--card-2);color:var(--ink)}
 
-/* ── SKILLS ── */
-.skills-sec{background:var(--bg);}
-.skills-wrap{padding-bottom:90px;}
-.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;}
-.sk-row{background:var(--surface);padding:24px 28px;border:1px solid transparent;transition:border-color .3s;cursor:default;}
-.sk-row:hover{border-color:rgba(240,192,64,.2);}
-.sk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.sk-name{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .3s;}
-.sk-row:hover .sk-name{color:var(--accent);}
-.sk-pct{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.sk-bar{height:2px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;}
-.sk-fill{height:100%;background:var(--grad);width:0;transition:width 1.5s cubic-bezier(.16,1,.3,1);}
-/* skill categories */
-.sk-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:3px;}
-.sk-cat{background:var(--surface);padding:22px 24px;border:1px solid transparent;cursor:default;transition:border-color .3s;}
-.sk-cat:hover{border-color:rgba(240,192,64,.2);}
-.sk-cat-lbl{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
-.sk-cat-items{display:flex;flex-wrap:wrap;gap:6px;}
-.sk-chip{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);padding:5px 10px;color:var(--muted);transition:all .3s;}
-.sk-chip:hover{border-color:var(--accent);color:var(--accent);}
+/* ---------- live demos ---------- */
+.demo{border:1px solid var(--line);border-radius:9px;background:var(--card-2);padding:15px;margin-top:15px}
+.demo-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 9px;margin-bottom:13px}
+.demo-head b{font-size:12.5px;font-weight:700}
+.demo-head span{font-size:12px;color:var(--ink-3)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px 16px}
+.ctrl{min-width:0}
+.ctrl > label{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--ink-2);margin-bottom:4px}
+.ctrl > label b{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:500}
+.ctrl input[type=range]{width:100%;accent-color:var(--blue);margin:0}
+.ctrl select{
+  width:100%;font-family:inherit;font-size:13px;padding:5px 8px;border-radius:6px;
+  border:1px solid var(--line-2);background:var(--card);color:var(--ink);
+}
+.seg{display:flex;border:1px solid var(--line-2);border-radius:7px;overflow:hidden}
+.seg button{
+  flex:1;font-family:inherit;font-size:12px;padding:6px 4px;border:none;cursor:pointer;
+  background:var(--card);color:var(--ink-2);
+}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--solid-fg);font-weight:600}
+.out{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}
+.verdict{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:11px}
+.badge{
+  font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.07em;
+  padding:4px 10px;border-radius:6px;border:1px solid currentColor;
+}
+.badge.good{color:var(--good)}
+.badge.warn{color:var(--warn)}
+.badge.bad{color:var(--bad)}
+.scorenum{font-family:var(--mono);font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scorebar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;flex:1;min-width:110px}
+.scorebar i{display:block;height:100%;width:0;background:var(--blue);transition:width .25s ease,background .25s ease}
+.rules{display:flex;flex-direction:column;gap:6px}
+.rule{display:flex;gap:10px;align-items:baseline;font-size:12.5px;min-width:0}
+.rule .c{font-family:var(--mono);font-size:11px;color:var(--ink-2);flex:none;width:96px}
+.rule .d{font-family:var(--mono);font-size:11.5px;flex:none;width:38px;text-align:right;font-variant-numeric:tabular-nums}
+.rule .e{color:var(--ink-2);flex:1;min-width:0;line-height:1.45}
+.rule.pass .d{color:var(--good)}
+.rule.fail .d{color:var(--bad)}
+.rule.stop .d{color:var(--bad);font-weight:600}
+.rule.idle{opacity:.45}
+.rule.idle .d{color:var(--ink-3)}
+.flowfig{margin:14px 0 0;border:1px solid var(--line);border-radius:9px;background:var(--card-2);padding:13px}
+.flowfig svg{display:block;width:100%;height:auto}
+.flowfig figcaption{font-size:12px;color:var(--ink-2);margin-top:9px;line-height:1.5}
 
-/* ── PROJECTS ── */
-.proj-sec{background:var(--surface);}
-.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;padding-bottom:90px;}
-.proj-card{background:var(--surface2);padding:36px 32px;border:1px solid transparent;position:relative;overflow:hidden;cursor:pointer;transition:all .4s;display:flex;flex-direction:column;justify-content:space-between;min-height:210px;}
-.proj-card:hover{border-color:rgba(240,192,64,.25);background:#1f1f22;}
-.proj-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1);}
-.proj-card:hover::after{transform:scaleX(1);}
-.proj-top{display:flex;justify-content:space-between;align-items:start;}
-.proj-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(244,240,232,.08);transition:-webkit-text-stroke-color .4s;}
-.proj-card:hover .proj-num{-webkit-text-stroke-color:rgba(240,192,64,.2);}
-.proj-arr{font-size:1.1rem;color:var(--accent);opacity:0;transform:translate(-7px,7px);transition:all .35s;}
-.proj-card:hover .proj-arr{opacity:1;transform:translate(0,0);}
-.proj-ttl{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.15rem;color:var(--text);margin-bottom:6px;transition:color .3s;}
-.proj-card:hover .proj-ttl{color:var(--accent);}
-.proj-tech{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-.proj-desc{font-size:.8rem;color:rgba(244,240,232,.5);line-height:1.65;margin-bottom:16px;}
-.proj-tags{display:flex;gap:6px;flex-wrap:wrap;}
-.ptag{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);padding:4px 9px;color:var(--muted);}
+footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
 
-/* ── CERTIFICATIONS ── */
-.cert-sec{background:var(--bg);}
-.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding-bottom:90px;}
-.cert-card{padding:36px 30px;background:var(--surface);border:1px solid transparent;position:relative;overflow:hidden;cursor:default;transition:all .4s;}
-.cert-card:hover{border-color:rgba(240,192,64,.25);transform:translateY(-5px);}
-.cert-card::before{content:'★';position:absolute;top:-12px;right:-4px;font-size:72px;color:rgba(240,192,64,.05);transition:transform .5s,color .4s;}
-.cert-card:hover::before{transform:rotate(15deg) scale(1.1);color:rgba(240,192,64,.1);}
-.cert-yr{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
-.cert-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;color:var(--text);margin-bottom:6px;line-height:1.3;}
-.cert-org{font-size:.78rem;color:var(--muted);}
-
-/* ── ACHIEVEMENTS STRIP ── */
-.ach-sec{background:var(--surface);padding:0;border-top:1px solid var(--border);}
-.ach-inner{padding:72px 60px;}
-.ach-sec .sec-hd{padding-top:0;}
-.ach-list{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;padding-bottom:0;}
-.ach-item{background:var(--surface2);padding:28px 32px;border:1px solid transparent;display:flex;gap:18px;align-items:start;cursor:default;transition:border-color .3s;}
-.ach-item:hover{border-color:rgba(240,192,64,.25);}
-.ach-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px;}
-.ach-txt{font-family:'Outfit',sans-serif;font-size:.9rem;line-height:1.65;color:rgba(244,240,232,.72);}
-.ach-txt strong{color:var(--accent);font-weight:700;}
-
-/* ── CONTACT ── */
-.contact-sec{background:var(--bg);}
-.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:100px;padding-bottom:90px;}
-.c-headline{font-family:'Lora',serif;font-style:italic;font-size:clamp(22px,2.8vw,42px);line-height:1.4;margin-bottom:40px;font-weight:400;}
-.c-headline strong{font-style:normal;color:var(--accent);}
-.c-info-list{display:flex;flex-direction:column;gap:20px;margin-bottom:32px;}
-.c-row{display:flex;gap:14px;align-items:start;}
-.c-icon{width:40px;height:40px;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:.9rem;transition:all .3s;}
-.c-row:hover .c-icon{background:var(--accent);color:#000;border-color:var(--accent);}
-.c-lbl{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.c-val{font-size:.86rem;color:var(--text);line-height:1.6;}
-.c-socs{display:flex;gap:8px;flex-wrap:wrap;}
-.csoc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:9px 15px;color:var(--muted);transition:all .3s;display:flex;align-items:center;gap:5px;}
-.csoc::before{content:'↗';color:var(--accent);}
-.csoc:hover{border-color:var(--accent);color:var(--accent);}
-
-/* FORM */
-.fform{display:flex;flex-direction:column;gap:0;}
-.frow2{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:3px;}
-.ff{position:relative;border:1px solid var(--border);background:var(--surface);margin-bottom:3px;transition:border-color .3s;}
-.ff:focus-within{border-color:var(--accent);}
-.ff.err{border-color:var(--red)!important;}
-.ff.ok{border-color:var(--green)!important;}
-.ff input,.ff textarea{width:100%;background:transparent;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:.92rem;color:var(--text);padding:24px 20px 10px;resize:none;}
-.ff textarea{min-height:130px;padding-top:30px;}
-.ff input::placeholder,.ff textarea::placeholder{color:transparent;}
-.ff-label{position:absolute;top:18px;left:20px;font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);pointer-events:none;transition:all .3s;}
-.ff input:focus~.ff-label,.ff input:not(:placeholder-shown)~.ff-label,
-.ff textarea:focus~.ff-label,.ff textarea:not(:placeholder-shown)~.ff-label{top:8px;font-size:.48rem;color:var(--accent);}
-.ff.err .ff-label{color:var(--red)!important;}
-.ff.ok .ff-label{color:var(--green)!important;}
-.ff-err{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--red);padding:4px 20px 8px;display:none;}
-.ff.err .ff-err{display:block;}
-.ff-ok-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--green);font-size:.8rem;opacity:0;transition:opacity .3s;}
-.ff textarea~.ff-ok-icon{top:20px;transform:none;}
-.ff.ok .ff-ok-icon{opacity:1;}
-.form-hint{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.08em;color:var(--muted);padding:10px 0;display:flex;align-items:center;gap:8px;}
-.form-hint::before{content:'✦';color:var(--accent);}
-.form-actions{display:flex;align-items:center;gap:20px;margin-top:8px;flex-wrap:wrap;}
-.submit-btn{background:var(--accent);color:#000;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:17px 48px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));transition:all .3s;position:relative;overflow:hidden;}
-.submit-btn::before{content:'';position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1);}
-.submit-btn:hover::before{transform:scaleX(1);}
-.submit-btn .st{position:relative;z-index:1;}
-.submit-btn:hover .st{color:#fff;}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
-.form-status{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:14px 20px;border-left:3px solid transparent;display:none;margin-top:4px;}
-.form-status.success{color:var(--green);border-left-color:var(--green);background:rgba(74,222,128,.07);display:block;}
-.form-status.fail{color:var(--red);border-left-color:var(--red);background:rgba(224,92,69,.07);display:block;}
-
-/* ── FOOTER ── */
-footer{background:var(--surface);border-top:1px solid var(--border);padding:34px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;position:relative;z-index:2;}
-.f-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;}
-.f-logo span{color:var(--accent);}
-.f-copy{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-.f-links{display:flex;gap:20px;}
-.f-links a{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .3s;}
-.f-links a:hover{color:var(--accent);}
-
-/* ── SCROLL REVEAL ── */
-.sr{opacity:0;transform:translateY(46px);transition:opacity .9s ease,transform .9s cubic-bezier(.16,1,.3,1);}
-.sr.d1{transition-delay:.1s;}.sr.d2{transition-delay:.2s;}.sr.d3{transition-delay:.3s;}.sr.d4{transition-delay:.4s;}
-.sr.vis{opacity:1;transform:translateY(0);}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1100px){.about-grid{grid-template-columns:1fr;}.cert-grid{grid-template-columns:repeat(2,1fr);}.stats-row{grid-template-columns:repeat(2,1fr);}.stats-row .stat-item:nth-child(2){border-right:none;}.stats-row .stat-item:nth-child(3){border-top:1px solid var(--border);}.stats-row .stat-item:nth-child(4){border-top:1px solid var(--border);border-right:none;}}
-@media(max-width:900px){#nav{padding:0 24px;}.nav-links,.nav-cta{display:none;}.ham{display:flex;}.hero,.wrap{padding-left:24px;padding-right:24px;}.hero-right{display:none;}.hero-h1{font-size:clamp(58px,15vw,95px);}.sec-hd{flex-direction:column;align-items:flex-start;gap:14px;padding:60px 0 44px;}.sec-aside{text-align:left;}.skills-grid{grid-template-columns:1fr;}.sk-cats{grid-template-columns:1fr;}.proj-grid{grid-template-columns:1fr;}.cert-grid{grid-template-columns:1fr;}.ach-list{grid-template-columns:1fr;}.contact-grid{grid-template-columns:1fr;gap:44px;}.frow2{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}.ach-inner{padding:60px 24px;}.footer{padding:26px 24px;flex-direction:column;text-align:center;}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (max-width:640px){
+  .banner .pipe{display:none}
+}
+@media (max-width:520px){
+  .tb-role{display:none}
+  .banner{height:138px}
+  .avatar{width:104px;height:104px;margin-top:-54px;border-width:4px}
+  .prj-top .when{margin-left:0;flex-basis:100%}
+  .card-pad{padding:18px}
+  .pro-body{padding:0 18px 18px}
+}
 </style>
 </head>
 <body>
 
-<div id="cd"></div>
-<div id="cr"></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="tb-mark" href="#top">
+      <img src="https://avatars.githubusercontent.com/u/105035591?v=4&amp;s=480" alt="">
+      <span>
+        <span class="tb-name">Jasmine Chabbra</span>
+        <span class="tb-role">Backend Engineer · Java &amp; Spring Boot</span>
+      </span>
+    </a>
+    <nav class="tb-nav" id="nav">
+      <a href="#about">About</a>
+      <a href="#featured">Featured</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
 
-<!-- LOADER -->
-<div id="loader">
-  <div class="ld-letters" id="lletters"></div>
-  <div class="ld-bar-wrap"><div class="ld-bar-fill"></div></div>
-  <div class="ld-pct" id="lpct">0%</div>
-</div>
+<div class="page" id="top">
 
-<!-- FULL MENU -->
-<div id="fmenu">
-  <a href="#about">About</a>
-  <a href="#skills">Skills</a>
-  <a href="#projects">Projects</a>
-  <a href="#certs">Certifications</a>
-  <a href="#contact">Contact</a>
-</div>
-
-<!-- NAV -->
-<nav id="nav">
-  <a class="nav-logo" href="#"><span>J.</span>Chabbra</a>
-  <ul class="nav-links">
-    <li><a href="#about" data-i="01">About</a></li>
-    <li><a href="#skills" data-i="02">Skills</a></li>
-    <li><a href="#projects" data-i="03">Projects</a></li>
-    <li><a href="#certs" data-i="04">Certs</a></li>
-    <li><a href="#contact" data-i="05">Contact</a></li>
-  </ul>
-<a href="./Jasmine_Resume.pdf" download class="nav-cta">Download CV</a>
-<div class="ham" id="ham"><span></span><span></span><span></span></div>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="bg-word" id="bgW">BACK<br>END</div>
-  <div class="hero-inner">
-    <div class="hero-left">
-      <div class="badge">✦ &nbsp;Backend Developer · Currently @ Lentra AI</div>
-      <h1 class="hero-h1" id="heroH1">
-        <span class="row"><span>JASMINE</span></span>
-        <span class="row"><span class="strk">BACKEND-</span></span>
-        <span class="row"><span class="gld">DEVELOPER.</span></span>
-      </h1>
-   <p class="hero-sub">
-      Java · Spring Boot · Microservices · PostgreSQL ·
-     <span class="tw" id="typed-el"></span><span class="cb"></span>
-   </p>
-<div class="hero-btns">
-        <a href="#projects" class="btn-g"><span class="t">View My Work</span></a>
-        <a href="#contact" class="btn-o">Get In Touch</a>
+  <section class="card">
+    <div class="banner">
+      <svg class="pipe" viewBox="0 0 430 96" fill="none" aria-hidden="true" focusable="false">
+        <defs>
+          <marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0 0 L6 3 L0 6 Z" fill="rgba(255,255,255,.30)"/>
+          </marker>
+        </defs>
+        <g stroke="rgba(255,255,255,.30)" stroke-width="1.2" marker-end="url(#ar)">
+          <path d="M84 48 H108"/><path d="M178 48 H202"/><path d="M272 48 H296"/>
+        </g>
+        <g fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.26)" stroke-width="1.2">
+          <rect x="6" y="30" width="76" height="36" rx="7"/>
+          <rect x="194" y="30" width="76" height="36" rx="7"/>
+          <rect x="288" y="30" width="86" height="36" rx="7"/>
+        </g>
+        <rect x="100" y="28" width="78" height="40" rx="8" fill="rgba(94,164,255,.16)" stroke="rgba(142,195,255,.62)" stroke-width="1.4"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="rgba(255,255,255,.62)" text-anchor="middle">
+          <text x="44" y="52">intake</text>
+          <text x="139" y="52" fill="rgba(190,222,255,.95)">underwrite</text>
+          <text x="232" y="52">disburse</text>
+          <text x="331" y="52">reconcile</text>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="8" fill="rgba(255,255,255,.34)" text-anchor="middle">
+          <text x="139" y="82">deterministic</text>
+        </g>
+        <circle class="tok" cx="40" cy="48" r="3.4" fill="#BFDDFF"/>
+      </svg>
+      <code><b>POST</b> /api/v1/applications &nbsp;·&nbsp; <b>Idempotency-Key:</b> 4f9c2a1e-7b33-4e21-9a4d-0cc18f6b21ae</code>
+    </div>
+    <div class="pro-body">
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/105035591?v=4&amp;s=480" alt="Jasmine Chabbra" width="124" height="124">
+      <h1 class="pro-name">Jasmine Chabbra <span class="pro-pronoun">(She/Her)</span></h1>
+      <p class="pro-head">Associate Software Engineer at Lentra. Java, Spring Boot and REST APIs. Digital lending microservices, 6+ fintech integrations (LOS, CKYC, credit bureau, ACH), SQL, Redis, CI/CD.</p>
+      <div class="pro-meta">
+        <span>Noida, Uttar Pradesh, India</span><span>·</span>
+        <a href="#contact">Contact info</a><span>·</span>
+        <a href="https://github.com/JasmineChabbra" target="_blank" rel="noopener">GitHub</a><span>·</span>
+        <a href="https://www.linkedin.com/in/jasminechabbra/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="open-pill"><span class="dot"></span><span><b>Open to work</b> &nbsp;Software Engineer / SDE, backend. Serving a 1-month notice period.</span></div>
+      <div class="btns">
+        <a class="btn solid" href="#projects">View projects</a>
+        <a class="btn" href="https://github.com/JasmineChabbra" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn" href="https://www.linkedin.com/in/jasminechabbra/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="mailto:chabbrajasmine275@gmail.com">Message</a>
+      </div>
+      <div class="orgs">
+        <span class="org"><i>LN</i> Lentra</span>
+        <span class="org"><i>CU</i> Chitkara University</span>
       </div>
     </div>
-    <div class="hero-right">
-      <div class="stat sr"><div class="stat-n">2+</div><div class="stat-l">Years at Lentra AI</div></div>
-      <div class="stat sr d1"><div class="stat-n">400+</div><div class="stat-l">LeetCode Solved</div></div>
-      <div class="stat sr d2"><div class="stat-n">8.66</div><div class="stat-l">CGPA · CSE</div></div>
-    </div>
-  </div>
-  <div class="hero-bottom">
-    <div class="scroll-c"><div class="scroll-ring">↓</div>Scroll to explore</div>
-    <div class="hero-soc">
-      <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank">LinkedIn</a>
-     <a href="https://github.com/JasmineChabbra" target="_blank">GitHub</a>
-      <a href="https://leetcode.com/Jasmine2003/" target="_blank">LeetCode</a>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- MARQUEE -->
-<div class="mq-wrap"><div class="mq-track" id="mqtrack"></div></div>
-
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="stats-row">
-    <div class="stat-item sr"><div class="stat-big" data-count="5000">2K+</div><div class="stat-txt">Monthly Apps Processed · Income & Expense Tracker</div></div>
-    <div class="stat-item sr d1"><div class="stat-big">70+</div><div class="stat-txt">Reusable Web Components Built</div></div>
-    <div class="stat-item sr d2"><div class="stat-big">40%</div><div class="stat-txt">Query Execution Time Reduced</div></div>
-    <div class="stat-item sr d3"><div class="stat-big">100+</div><div class="stat-txt">Code Vulnerabilities Resolved</div></div>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<section class="sec about-sec" id="about">
-  <div class="wrap">
-    <div class="sec-hd sr">
-      <div><div class="sec-lbl">// 01 — About Me</div><h2 class="sec-ttl">WHO <span class="strk">I</span> <span class="gld">AM</span></h2></div>
-      <p class="sec-aside">Backend Developer. Fintech specialist. Problem solver. Building enterprise software that matters.</p>
+  <section class="card">
+    <div class="stats">
+      <div class="stat"><b data-to="2.1" data-suffix=" yrs">2.1 yrs</b><span>Building backend at Lentra</span></div>
+      <div class="stat"><b data-to="6" data-suffix="+">6+</b><span>External financial systems integrated</span></div>
+      <div class="stat"><b data-to="4">4</b><span>Open-source backend services</span></div>
+      <div class="stat"><b data-to="47">47</b><span>Tests across LoanIQ and SentinelPay</span></div>
     </div>
-    <div class="about-grid">
-      <div class="about-left sr">
-        <p>I'm <strong>Jasmine</strong> — a Backend Developer currently working as <em>Associate · Product Engineering at Lentra AI Pvt Ltd</em>.I build APIs and backend services used in banking and loan processing platforms.</p>
-        <p>Specialising in <strong>SpringBoot, Java, PostgreSQL, and microservices architecture</strong>. I've shipped production systems with CIBIL integration, credit risk assessment, and real-time loan processing — the kind of work that has measurable impact.</p>
-        <p>B.E. Computer Science from <strong>Chitkara University with 8.66 CGPA</strong>. 400+ LeetCode problems solved. My work focuses on scalable microservices, secure API integration, and transaction processing systems. Currently working on banking connectors.</p>
-        <div class="tag-cloud" id="tagcloud"></div>
-        <a href="Jasmine_Resume.pdf" target="_blank" class="btn-g" style="margin-top:36px;"><span class="t">Download Resume ↓</span></a>
+  </section>
+
+  <section class="card card-pad" id="about">
+    <h2 class="sec">About</h2>
+    <div class="clamp" id="aboutClamp">
+      <p style="margin:0 0 11px">I'm a backend engineer at Lentra, working on the services behind a digital lending platform. A loan application moves through intake, underwriting and disbursement, and my job is most of the plumbing in between: the Spring Boot services that carry it, and the six-plus external systems they have to talk to on the way.</p>
+      <div class="more">
+        <p style="margin:0 0 11px">A lot of that turns out to be failure handling. Bank APIs time out. Callbacks arrive twice, or never. I've spent much of the last year on retry flows that resume at the step that failed instead of starting the whole thing again, and on moving bank-specific logic out of code and into configuration, so onboarding a new bank isn't another branch in a method.</p>
+        <p style="margin:0 0 11px">In my own time I build the same kind of system in the open. LoanIQ is a credit underwriting engine where the rule engine makes the call and the model only writes the explanation. SentinelPay scores a payment in milliseconds and leaves the slow thinking to an agent that runs after the payment is already on hold. Both ship with tests, migrations, Docker and CI, because I wanted them to be things a person could clone and actually run.</p>
       </div>
-      <div class="about-right sr d2" id="xplist"></div>
+      <button class="seemore" type="button" data-target="aboutClamp">…see more</button>
+      <div class="tags" style="margin-top:15px">
+        <span class="tag key">Java</span><span class="tag key">Spring Boot</span><span class="tag key">Microservices</span>
+        <span class="tag key">REST API design</span><span class="tag key">PostgreSQL</span>
+        <span class="tag">Redis</span><span class="tag">Docker</span><span class="tag">CI/CD</span>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- SKILLS -->
-<section class="sec skills-sec" id="skills">
-  <div class="wrap">
-    <div class="sec-hd sr">
-      <div><div class="sec-lbl">// 02 — Skills</div><h2 class="sec-ttl">WHAT I <span class="gld">KNOW</span></h2></div>
-      <p class="sec-aside" style="color:var(--muted)">Full-stack proficiency from database design to pixel-perfect UI.</p>
+  <section class="card card-pad" id="featured">
+    <h2 class="sec">Featured</h2>
+    <div class="feat">
+      <a href="https://github.com/JasmineChabbra/LoanIQ" target="_blank" rel="noopener">
+        <span class="kind">Repository</span>
+        <span class="t">LoanIQ</span>
+        <span class="d">Credit underwriting where the rule engine decides and the model only explains.</span>
+        <span class="go">View on GitHub ↗</span>
+      </a>
+      <a href="https://github.com/JasmineChabbra/SentinelPay" target="_blank" rel="noopener">
+        <span class="kind">Repository</span>
+        <span class="t">SentinelPay</span>
+        <span class="d">Payment fraud scoring on the hot path, an AI agent behind the hold.</span>
+        <span class="go">View on GitHub ↗</span>
+      </a>
+      <a href="https://github.com/JasmineChabbra/payrelay" target="_blank" rel="noopener">
+        <span class="kind">Repository</span>
+        <span class="t">PayRelay</span>
+        <span class="d">Exactly-once payouts across four bank APIs, with step-level resume.</span>
+        <span class="go">View on GitHub ↗</span>
+      </a>
     </div>
-    <div class="skills-wrap">
-      <div class="skills-grid" id="skillsgrid"></div>
-      <div class="sk-cats" id="skcats" style="margin-top:3px;"></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- PROJECTS -->
-<section class="sec proj-sec" id="projects">
-  <div class="wrap">
-    <div class="sec-hd sr">
-      <div><div class="sec-lbl">// 03 — Projects</div><h2 class="sec-ttl">WHAT I <span class="gld">BUILT</span></h2></div>
-      <p class="sec-aside">From enterprise fintech to algorithmic tools — projects with real-world impact.</p>
-    </div>
-    <div class="proj-grid" id="projgrid"></div>
-  </div>
-</section>
+  <section class="card card-pad" id="experience">
+    <h2 class="sec">Experience</h2>
 
-<!-- CERTIFICATIONS -->
-<section class="sec cert-sec" id="certs">
-  <div class="wrap">
-    <div class="sec-hd sr">
-      <div><div class="sec-lbl">// 04 — Certifications</div><h2 class="sec-ttl">MY <span class="gld">CREDS</span></h2></div>
-      <p class="sec-aside" style="color:var(--muted)">Industry-recognised credentials from Google, Coursera, and more.</p>
-    </div>
-    <div class="cert-grid" id="certgrid"></div>
-  </div>
-</section>
-
-<!-- ACHIEVEMENTS -->
-<section class="sec ach-sec" id="achievements">
-  <div class="ach-inner wrap">
-    <div class="sec-hd sr" style="padding-top:0">
-      <div><div class="sec-lbl">// 05 — Achievements</div><h2 class="sec-ttl">WINS & <span class="gld">AWARDS</span></h2></div>
-      <p class="sec-aside">Competition results and community impact that set me apart.</p>
-    </div>
-    <div class="ach-list" id="achlist"></div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="sec contact-sec" id="contact">
-  <div class="wrap">
-    <div class="sec-hd sr">
-      <div><div class="sec-lbl">// 06 — Contact</div><h2 class="sec-ttl">LET'S <span class="gld">TALK</span></h2></div>
-      <p class="sec-aside" style="color:var(--muted)">Open to exciting roles, collaborations, and conversations.</p>
-    </div>
-    <div class="contact-grid">
-      <div class="sr">
-        <p class="c-headline">Got an exciting opportunity? Let's <strong>create impact together.</strong></p>
-        <div class="c-info-list">
-          <div class="c-row"><div class="c-icon">✉</div><div><div class="c-lbl">Email</div><div class="c-val">chabbrajasmine275@gmail.com</div></div></div>
-          <div class="c-row"><div class="c-icon">📞</div><div><div class="c-lbl">Phone</div><div class="c-val">+91 8168300029</div></div></div>
-          <div class="c-row"><div class="c-icon">📍</div><div><div class="c-lbl">Location</div><div class="c-val">India · Open to Remote & Relocation</div></div></div>
-          <div class="c-row"><div class="c-icon">⚡</div><div><div class="c-lbl">Response Time</div><div class="c-val">Within 24 hours</div></div></div>
+    <article class="xp">
+      <div class="xp-logo">LN</div>
+      <div class="xp-main">
+        <h3 class="xp-role">Associate Software Engineer</h3>
+        <div class="xp-co">Lentra · Full-time</div>
+        <div class="xp-when">Jul 2025 – Present · Noida, Uttar Pradesh, India · On-site</div>
+        <div class="clamp" id="xp1">
+          <ul class="pts">
+            <li>Design and maintain Java and Spring Boot microservices for digital lending and loan disbursement, delivering REST APIs, business logic, validation and error handling on a production fintech platform.</li>
+            <li>Built and maintained integrations with 6+ external financial systems, including LOS, DMS, CKYC, credit bureau, ACH and decisioning, covering request and response transformation, authentication, callback processing and failure recovery.</li>
+          </ul>
+          <div class="more">
+            <ul class="pts" style="margin-top:7px">
+              <li>Architected failure handling and retry flows that reprocess failed operations without repeating completed steps, improving the reliability of financial transactions.</li>
+              <li>Built configurable, lookup-driven data mapping that turns customer data into bank-specific API payloads, removing hardcoded logic for every new bank integration.</li>
+            </ul>
+          </div>
+          <button class="seemore" type="button" data-target="xp1">…see more</button>
         </div>
-        <div class="c-socs">
-          <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank" class="csoc">LinkedIn</a>
-          <a href="https://github.com/JasmineChabbra" target="_blank" class="csoc">GitHub</a>
-          <a href="https://leetcode.com/u/Jasmine2003" target="_blank" class="csoc">LeetCode</a>
-          <a href="https://www.instagram.com/jasmnchabbra__/" target="_blank" class="csoc">Instagram</a>
+        <div class="tags">
+          <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">REST APIs</span>
+          <span class="tag">Microservices</span><span class="tag">SQL</span><span class="tag">Redis</span>
         </div>
       </div>
-      <div class="sr d2">
-<form class="fform" action="mailto:chabbrajasmine275@gmail.com" method="post" enctype="text/plain">
-              <div class="frow2">
-            <div class="ff" id="ff-name">
-<input type="text" id="f-name" name="name" placeholder=" " autocomplete="off">
-<label class="ff-label" for="f-name">Full Name</label>
-              <span class="ff-ok-icon">✓</span>
-              <div class="ff-err">Please enter your name (min 2 chars)</div>
+    </article>
+
+    <article class="xp">
+      <div class="xp-logo">LN</div>
+      <div class="xp-main">
+        <h3 class="xp-role">Full-stack Developer</h3>
+        <div class="xp-co">Lentra · Internship</div>
+        <div class="xp-when">Oct 2024 – Jun 2025 · Noida, Uttar Pradesh, India · On-site</div>
+        <ul class="pts">
+          <li>Contributed to Java and Spring Boot backend services and REST APIs supporting financial application and integration workflows.</li>
+          <li>Implemented API validations, data transformations, database operations and integration changes driven by evolving business requirements.</li>
+          <li>Debugged integration issues by tracing application logs, database records, API responses and configuration-driven workflows to root cause.</li>
+        </ul>
+        <div class="tags">
+          <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">SQL</span><span class="tag">Debugging</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="card card-pad" id="projects">
+    <h2 class="sec">Projects</h2>
+
+    <article class="prj">
+      <div class="prj-top"><h3>LoanIQ</h3><span class="when">Oct 2026 – Present</span></div>
+      <p class="prj-sum">An AI-assisted credit underwriting engine. A regulator can ask two years later why an applicant was declined, and the answer has to come out the same every time it is asked.</p>
+      <div class="note">
+        <b>Why it is built this way</b>
+        <p>A model anywhere in the decision path makes the system unauditable, because the same application can score differently on two runs. So the model reads documents and writes the rationale, and nothing else. The decision comes from a deterministic rule engine whose thresholds live in configuration.</p>
+      </div>
+      <ul class="pts">
+        <li>Five ordered policy rules with hard stops. Every outcome is stored per application, passing rules included, so an audit shows what was considered and not only what failed.</li>
+        <li><code>Idempotency-Key</code> is a unique column, so a client retry replays the original decision instead of underwriting a second time.</li>
+        <li>A missing bureau score is treated as risk rather than as neutral, which is how thin-file applications get caught instead of waved through.</li>
+        <li>13 tests covering decision boundaries, determinism and idempotent replay.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java 21</span><span class="tag">Spring Boot 3.3</span><span class="tag">Spring Data JPA</span>
+        <span class="tag">PostgreSQL</span><span class="tag">Flyway</span><span class="tag">Redis</span>
+        <span class="tag">Testcontainers</span><span class="tag">Docker</span>
+      </div>
+      <div class="demo" id="lq">
+        <div class="demo-head">
+          <b>Run the rule engine</b>
+          <span>the real thresholds from <code>application.yml</code>, evaluated in order, stopping where the engine stops</span>
+        </div>
+        <div class="ctrls">
+          <div class="ctrl">
+            <label for="lq-bureau">Bureau score <b id="lq-bureau-v">760</b></label>
+            <input type="range" id="lq-bureau" min="500" max="900" step="5" value="760">
+          </div>
+          <div class="ctrl">
+            <label for="lq-income">Monthly income <b id="lq-income-v">₹90,000</b></label>
+            <input type="range" id="lq-income" min="10000" max="300000" step="5000" value="90000">
+          </div>
+          <div class="ctrl">
+            <label for="lq-oblig">Monthly EMIs <b id="lq-oblig-v">₹15,000</b></label>
+            <input type="range" id="lq-oblig" min="0" max="150000" step="2500" value="15000">
+          </div>
+          <div class="ctrl">
+            <label for="lq-amount">Loan requested <b id="lq-amount-v">₹3,00,000</b></label>
+            <input type="range" id="lq-amount" min="50000" max="6000000" step="50000" value="300000">
+          </div>
+          <div class="ctrl">
+            <label for="lq-tenure">Tenure <b id="lq-tenure-v">36 mo</b></label>
+            <input type="range" id="lq-tenure" min="3" max="96" step="3" value="36">
+          </div>
+          <div class="ctrl">
+            <label for="lq-emp">Employment</label>
+            <select id="lq-emp">
+              <option value="SALARIED">Salaried</option>
+              <option value="CONTRACT">Contract</option>
+              <option value="SELF_EMPLOYED">Self-employed</option>
+              <option value="UNEMPLOYED">Unemployed</option>
+            </select>
+          </div>
+        </div>
+        <div class="out">
+          <div class="verdict">
+            <span class="badge good" id="lq-badge">APPROVE</span>
+            <span class="scorenum"><b id="lq-score">589</b> / 1000</span>
+            <span class="scorebar"><i id="lq-bar"></i></span>
+          </div>
+          <div class="rules" id="lq-rules"></div>
+        </div>
+      </div>
+      <a class="prj-link" href="https://github.com/JasmineChabbra/LoanIQ" target="_blank" rel="noopener">github.com/JasmineChabbra/LoanIQ ↗</a>
+    </article>
+
+    <article class="prj">
+      <div class="prj-top"><h3>SentinelPay</h3><span class="when">Oct 2026 – Present</span></div>
+      <p class="prj-sum">Fraud detection for card and UPI payments, split along the line that decides the architecture: what has to be fast, and what is allowed to be slow.</p>
+      <div class="note">
+        <b>Why it is built this way</b>
+        <p>Scoring sits on the payment's critical path, so it stays deterministic, model-free and fixed-cost. Investigation only runs once a payment is already held, which is exactly why it can take seconds and call a model.</p>
+      </div>
+      <ul class="pts">
+        <li>Five risk signals scored over a single batch of context queries, so adding a signal never adds a query to the hot path.</li>
+        <li>Weights are additive and capped at 100, and no single signal can reach the block threshold alone. One bad signal costs precision instead of declining every customer at once.</li>
+        <li>An agent works held cases through an allow-list of three read-only tools. It recommends, and its recommendation is stored next to the analyst's verdict rather than replacing it, so the two can be compared later.</li>
+        <li>34 tests across signals, banding boundaries, the agent loop and the full pipeline on a real database.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java 21</span><span class="tag">Spring Boot 3.3</span><span class="tag">PostgreSQL</span>
+        <span class="tag">Redis</span><span class="tag">Flyway</span><span class="tag">Testcontainers</span>
+        <span class="tag">Docker</span><span class="tag">GitHub Actions</span>
+      </div>
+      <div class="demo" id="sp">
+        <div class="demo-head">
+          <b>Score a payment</b>
+          <span>same five signals and weights as the service; account baseline is ₹1,000 average spend with prior history</span>
+        </div>
+        <div class="ctrls">
+          <div class="ctrl">
+            <label for="sp-amount">Amount <b id="sp-amount-v">₹20,000</b></label>
+            <input type="range" id="sp-amount" min="500" max="150000" step="500" value="20000">
+          </div>
+          <div class="ctrl">
+            <label for="sp-count">Payments in last 10 min <b id="sp-count-v">5</b></label>
+            <input type="range" id="sp-count" min="1" max="10" step="1" value="5">
+          </div>
+          <div class="ctrl">
+            <label for="sp-chan">Channel</label>
+            <select id="sp-chan">
+              <option value="CARD_NOT_PRESENT">Card-not-present</option>
+              <option value="CARD_PRESENT">Card present</option>
+              <option value="UPI">UPI</option>
+            </select>
+          </div>
+          <div class="ctrl">
+            <label>Device</label>
+            <div class="seg" id="sp-dev">
+              <button type="button" data-v="0" aria-pressed="false">Known</button>
+              <button type="button" data-v="1" aria-pressed="true">New</button>
             </div>
-            <div class="ff" id="ff-email">
-<input type="email" id="f-email" name="email" placeholder=" " autocomplete="off">
-<label class="ff-label" for="f-email">Email Address</label>
-              <span class="ff-ok-icon">✓</span>
-              <div class="ff-err" id="email-err">Please enter a valid email</div>
+          </div>
+          <div class="ctrl">
+            <label>Country</label>
+            <div class="seg" id="sp-geo">
+              <button type="button" data-v="0" aria-pressed="false">Familiar</button>
+              <button type="button" data-v="1" aria-pressed="true">First time</button>
             </div>
           </div>
-          <div class="ff" id="ff-phone">
-<input type="tel" id="f-phone" name="phone" placeholder=" ">
-<label class="ff-label" for="f-phone">Phone (Optional)</label>
-            <span class="ff-ok-icon">✓</span>
+        </div>
+        <div class="out">
+          <div class="verdict">
+            <span class="badge bad" id="sp-badge">BLOCK</span>
+            <span class="scorenum"><b id="sp-score">100</b> / 100</span>
+            <span class="scorebar"><i id="sp-bar"></i></span>
           </div>
-          <div class="ff" id="ff-subj">
-<input type="text" id="f-subj" name="subject" placeholder=" ">
-<label class="ff-label" for="f-subj">Subject</label>
-            <span class="ff-ok-icon">✓</span>
-            <div class="ff-err">Please enter a subject (min 3 chars)</div>
-          </div>
-          <div class="ff" id="ff-msg">
-<textarea id="f-msg" name="message" rows="5" placeholder=" "></textarea>
-<label class="ff-label" for="f-msg">Your Message</label>
-            <span class="ff-ok-icon">✓</span>
-            <div class="ff-err">Message must be at least 20 characters</div>
-          </div>
-          <p class="form-hint">Your message goes directly to chabbrajasmine275@gmail.com</p>
-          <div class="form-actions">
-            <button type="submit" class="submit-btn" id="submitbtn"><span class="st" id="btntxt">Send Message →</span></button>
-          </div>
-          <div class="form-status" id="fstatus"></div>
-        </form>
+          <div class="rules" id="sp-rules"></div>
+        </div>
+      </div>
+      <a class="prj-link" href="https://github.com/JasmineChabbra/SentinelPay" target="_blank" rel="noopener">github.com/JasmineChabbra/SentinelPay ↗</a>
+    </article>
+
+    <article class="prj">
+      <div class="prj-top"><h3>PayRelay</h3><span class="when">2026</span></div>
+      <p class="prj-sum">A payout orchestration engine with exactly-once transfers across four bank APIs. A payout that fails halfway has to resume, not restart, so idempotency keys live in both Redis and the database and every step records its own completion.</p>
+      <ul class="pts">
+        <li>Config-driven integrations for four bank APIs across API key, OAuth2 and HMAC authentication.</li>
+        <li>Step-level resume, retries and a dead-letter queue, so a failed payout never repeats a step that already went through.</li>
+        <li>Zero duplicate payouts under a 25% injected failure rate.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java 21</span><span class="tag">Spring Boot</span><span class="tag">Redis</span>
+        <span class="tag">SQL</span><span class="tag">REST</span>
+      </div>
+      <figure class="flowfig">
+        <svg viewBox="0 0 620 158" role="img" aria-label="A payout fails at the bank transfer step; the retry resumes at that step instead of replaying the two steps that already completed.">
+          <g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink-3)">
+            <text x="0" y="40">attempt 1</text>
+            <text x="0" y="116">retry</text>
+          </g>
+          <g stroke="var(--line-2)" stroke-width="1.2" fill="none">
+            <path d="M212 34 H236"/><path d="M364 34 H388"/><path d="M516 34 H540"/>
+            <path d="M212 110 H236"/><path d="M364 110 H388"/><path d="M516 110 H540"/>
+          </g>
+          <!-- attempt 1 -->
+          <g fill="none" stroke="var(--line-2)" stroke-width="1.3">
+            <rect x="70" y="16" width="142" height="36" rx="7"/>
+            <rect x="236" y="16" width="128" height="36" rx="7"/>
+            <rect x="540" y="16" width="72" height="36" rx="7"/>
+          </g>
+          <rect x="388" y="14" width="128" height="40" rx="8" fill="none" stroke="var(--bad)" stroke-width="1.6"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink-2)" text-anchor="middle">
+            <text x="141" y="38">validate</text>
+            <text x="300" y="38">reserve funds</text>
+            <text x="452" y="38" fill="var(--bad)">bank transfer</text>
+            <text x="576" y="38" opacity=".45">confirm</text>
+          </g>
+          <text x="452" y="68" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--bad)" text-anchor="middle">timeout</text>
+          <!-- retry -->
+          <g fill="none" stroke="var(--line)" stroke-width="1.3" stroke-dasharray="4 3">
+            <rect x="70" y="92" width="142" height="36" rx="7"/>
+            <rect x="236" y="92" width="128" height="36" rx="7"/>
+          </g>
+          <rect x="388" y="90" width="128" height="40" rx="8" fill="var(--blue-wash)" stroke="var(--blue)" stroke-width="1.6"/>
+          <rect x="540" y="92" width="72" height="36" rx="7" fill="none" stroke="var(--good)" stroke-width="1.4"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="10.5" text-anchor="middle">
+            <text x="141" y="114" fill="var(--ink-3)">skipped</text>
+            <text x="300" y="114" fill="var(--ink-3)">skipped</text>
+            <text x="452" y="114" fill="var(--blue-ink)">bank transfer</text>
+            <text x="576" y="114" fill="var(--good)">confirm</text>
+          </g>
+          <text x="141" y="146" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--ink-3)" text-anchor="middle">already recorded complete</text>
+        </svg>
+        <figcaption>The retry does not replay the first two steps. Each step records its own completion against the payout's idempotency key, so a resume starts where it stopped and the money moves once.</figcaption>
+      </figure>
+      <a class="prj-link" href="https://github.com/JasmineChabbra/payrelay" target="_blank" rel="noopener">github.com/JasmineChabbra/payrelay ↗</a>
+    </article>
+
+    <article class="prj">
+      <div class="prj-top"><h3>PixWipe</h3><span class="when">Aug 2026 – Sep 2026</span></div>
+      <p class="prj-sum">A full-stack AI background-removal product, and the one project here where I owned the frontend too: Spring Boot REST APIs over MySQL, a React 18 interface built with Vite and Tailwind, and authentication handled through Clerk instead of rolled by hand.</p>
+      <div class="tags">
+        <span class="tag">Spring Boot</span><span class="tag">Spring Data JPA</span><span class="tag">MySQL</span>
+        <span class="tag">Maven</span><span class="tag">React 18</span><span class="tag">Tailwind CSS</span>
+        <span class="tag">Vite</span><span class="tag">Clerk</span>
+      </div>
+      <a class="prj-link" href="https://github.com/JasmineChabbra/PixWipe" target="_blank" rel="noopener">github.com/JasmineChabbra/PixWipe ↗</a>
+    </article>
+
+    <article class="prj">
+      <div class="prj-top"><h3>URL Shortener API</h3><span class="when">2026</span></div>
+      <p class="prj-sum">A small Spring Boot REST API that shortens URLs and redirects to the original link.</p>
+      <div class="tags">
+        <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">REST</span><span class="tag">SQL</span>
+      </div>
+      <a class="prj-link" href="https://github.com/JasmineChabbra/url-shortener-api" target="_blank" rel="noopener">github.com/JasmineChabbra/url-shortener-api ↗</a>
+    </article>
+  </section>
+
+  <section class="card card-pad" id="skills">
+    <h2 class="sec">Skills</h2>
+
+    <div class="sk">
+      <div class="sk-badge">JV</div>
+      <div>
+        <h3>Java and the Spring ecosystem</h3>
+        <p>Two years of production Spring Boot on a live lending platform, plus four services built from scratch in the open.</p>
+        <div class="list">Java 21 · Spring Boot · Spring Data JPA · Spring Security · Spring MVC · Hibernate · Maven</div>
       </div>
     </div>
-  </div>
-</section>
 
-<footer>
-  <a class="f-logo" href="#"><span></span>JASMINE</a>
-  <div class="f-copy">© 2025 JASMINE· Backend Developer</div>
-  <div class="f-links">
-    <a href="https://linkedin.com/in/jasmine-chabbra-06108925a/" target="_blank">LinkedIn</a>
-    <a href="https://github.com/JasmineChabbra" target="_blank">GitHub</a>
-    <a href="https://leetcode.com/u/Jasmine2003/" target="_blank">LeetCode</a>
-  </div>
-</footer>
+    <div class="sk">
+      <div class="sk-badge">API</div>
+      <div>
+        <h3>REST APIs and integrations</h3>
+        <p>Integrated 6+ external financial systems, including LOS, DMS, CKYC, credit bureau, ACH and decisioning, across API key, OAuth2 and HMAC authentication.</p>
+        <div class="list">REST API design · Microservices · Request and response transformation · Callback processing · Postman</div>
+      </div>
+    </div>
 
-<!-- ============================================================
-     JAVASCRIPT
-============================================================ -->
+    <div class="sk">
+      <div class="sk-badge">REL</div>
+      <div>
+        <h3>Reliability in money flows</h3>
+        <p>Idempotency keys, step-level resume, retries and dead-letter queues, so a failed transaction recovers without repeating a step that already succeeded.</p>
+        <div class="list">Idempotency · Retry and recovery design · Audit trails · Failure injection</div>
+      </div>
+    </div>
+
+    <div class="sk">
+      <div class="sk-badge">DB</div>
+      <div>
+        <h3>Data</h3>
+        <p>Schema design with versioned migrations, query work against production data, and Redis where a lookup must not hit the database twice.</p>
+        <div class="list">PostgreSQL · MySQL · SQL · Redis · Flyway</div>
+      </div>
+    </div>
+
+    <div class="sk">
+      <div class="sk-badge">CI</div>
+      <div>
+        <h3>Build and delivery</h3>
+        <p>Every open-source project ships with a multi-stage Dockerfile, Compose for local dependencies, and CI that runs the suite on each push.</p>
+        <div class="list">Docker · Docker Compose · GitHub Actions · Git · CI/CD</div>
+      </div>
+    </div>
+
+    <div class="sk">
+      <div class="sk-badge">TST</div>
+      <div>
+        <h3>Correctness</h3>
+        <p>47 tests across the two flagship services, covering decision boundaries, determinism, idempotent replay and whole pipelines on a real database.</p>
+        <div class="list">JUnit 5 · Mockito · Testcontainers · H2</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-pad" id="education">
+    <h2 class="sec">Education</h2>
+    <div class="edu">
+      <div class="xp-logo">CU</div>
+      <div>
+        <h3>Chitkara University</h3>
+        <p>Bachelor of Engineering, Computer Science and Engineering</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-pad" id="contact">
+    <h2 class="sec">Contact info</h2>
+    <div class="cinfo">
+      <div class="crow">
+        <span class="clabel">Email</span>
+        <span class="cval" id="addr">chabbrajasmine275@gmail.com</span>
+        <button class="copy" id="copyBtn" type="button">Copy</button>
+      </div>
+      <div class="crow">
+        <span class="clabel">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/jasminechabbra/" target="_blank" rel="noopener">linkedin.com/in/jasminechabbra ↗</a>
+      </div>
+      <div class="crow">
+        <span class="clabel">GitHub</span>
+        <a href="https://github.com/JasmineChabbra" target="_blank" rel="noopener">github.com/JasmineChabbra ↗</a>
+      </div>
+      <div class="crow">
+        <span class="clabel">Location</span>
+        <span>Noida, Uttar Pradesh, India</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 Jasmine Chabbra · Noida, India</footer>
+</div>
+
 <script>
-/* ── DATA (from resume) ── */
-const TAGS=['Angular 18','StencilJS','Spring Boot','Java','TypeScript','JavaScript','Python','Kotlin','PostgreSQL','MongoDB','AWS','Docker','Node.js','Tailwind CSS','Git','SonarQube'];
-
-const EXPERIENCES=[
-  {
-    role:'Associate · Product Engineering',
-    company:'Lentra AI Pvt Ltd',
-    date:'July 2025 — Present',
-    bullets:[
-      'Implemented secure user authentication, CRUD operations,</strong> and Restful APIs for data management.',
-      'Engineered RESTful APIs (Spring Boot, Java 17) handling requests with <strong>sub-200ms response time</strong>',
-      'Integrated SonarQube — resolved <strong>100+ code vulnerabilities</strong>, improving production quality',
-      'Optimised PostgreSQL queries reducing execution time by <strong>40%</strong> through strategic indexing',
-    ]
-  },
-  {
-    role:'Full Stack Developer · Internship',
-    company:'Lentra AI Pvt Ltd',
-    date:'Oct 2024 — June 2025',
-    bullets:[
-      'Built <strong>Income & Expense Tracker </strong> (FintechSystem) — Angular 18, Spring Boot, PostgreSQL — handling <strong>5,000+ monthly applications</strong>',
-      'Pioneered StencilJS: created <strong>70+ reusable framework-agnostic web components</strong>, boosting dev efficiency by 30%, cutting code duplication by 45%',
-      'Built microservices for loan processing & credit verification with ACID-compliant PostgreSQL schemas',
-      'Improved loan approval rates by <strong>15%</strong> through personalised creditworthiness recommendations',
-    ]
-  },
-];
-
-const SKILLS_BARS=[
-  {n:'Angular 18 / StencilJS',p:75},{n:'Spring Boot / Java',p:90},
-  {n:'TypeScript / JavaScript',p:60},{n:'Python',p:70},
-  {n:'PostgreSQL / MongoDB',p:82},{n:'RESTful APIs / Microservices',p:86},
-  {n:'AWS (EC2, S3) / Docker',p:72},{n:'Kotlin',p:70},
-];
-
-const SKILL_CATS=[
-  {lbl:'Languages',  items:['Java','JavaScript','TypeScript','Python','Kotlin','SQL']},
-  {lbl:'Frontend',   items:['Angular 18','StencilJS','HTML5','CSS3','Tailwind CSS','React']},
-  {lbl:'Backend',    items:['Spring Boot','Node.js','Express.js','RESTful APIs','Microservices']},
-  {lbl:'Database',   items:['PostgreSQL','MongoDB','MySQL']},
-  {lbl:'Cloud & DevOps', items:['AWS EC2','AWS S3','Docker','SonarQube']},
-  {lbl:'Tools',      items:['Git','GitHub','IntelliJ','VSCode','Android Studio','Jupyter']},
-];
-
-const PROJECTS=[
-  {
-    n:'01',title:'Income and Expense Tracker —  Fintech System',
-    tech:'Angular 18 · Spring Boot · PostgreSQL',
-    desc:'Full-stack fintech app with CIBIL integration, credit risk assessment & automated document verification. Processed 2,000+ monthly applications, reduced processing time by 40%.',
-    tags:['Angular','Spring Boot','PostgreSQL','Microservices','CIBIL'],
-    href:'#'
-  },
-  {
-    n:'02',title:'ZipCraft — File Compression Tool',
-    tech:'Java · Algorithms',
-    desc:'Huffman Algorithm implementation reducing file size by 40% and cutting data transfer time by 50% by assigning shorter binary codes to more frequent symbols.',
-    tags:['Java','Huffman','DSA','Compression'],
-    href:'#'
-  },
-  {
-    n:'03',title:'Smart Attendance System',
-    tech:'Python · OpenCV · SQL',
-    desc:'Face recognition-based attendance system achieving 98% accuracy with real-time detection, admin dashboard, and automated report generation.',
-    tags:['Python','OpenCV','SQL','ML','Face Recognition'],
-    href:'#'
-  },
-  {
-    n:'04',title:'Krishi Dost Web App',
-    tech:'HTML · CSS · JavaScript',
-    desc:'Full web application for detecting crop diseases — built under hackathon conditions at Techstars Startup Weekend. Won 3rd place nationally.',
-    tags:['HTML','CSS','JavaScript','UX'],
-    href:'#'
-  },
-];
-
-const CERTS=[
-  {yr:'2024',name:'Advanced Data Structures & Algorithms',org:'Google'},
-  {yr:'2024',name:'Advanced Programming in Kotlin',org:'Coursera'},
-  {yr:'2024',name:'Google Cloud Certified',org:'Google Cloud'},
-];
-
-const ACHIEVEMENTS=[
-  {icon:'🥈',txt:'<strong>2nd Place · University Hackathon</strong> — Built a system to help farmers to detect crop diseases by capturing images through a camera.'},
-  {icon:'🥉',txt:'<strong>3rd Place · Techstars Startup Weekend</strong> — Developed a full  Online Shopping Web App (HTML, CSS, JS) in 54 hours.'},
-  {icon:'⚔️',txt:'<strong>400+ LeetCode Problems Solved</strong> — Consistent competitive programmer with strong DSA fundamentals.'},
-];
-
-const MQ_ITEMS=['Angular 18','Spring Boot','StencilJS','PostgreSQL','Microservices','Java 17','AWS','Docker','TypeScript','CIBIL Integration','RESTful APIs','Kotlin'];
-const TYPED=['Full Stack Developer','Angular Specialist','Java Engineer','Problem Solver','Fintech Builder'];
-
-/* ── LOADER ── */
-const lleEl=document.getElementById('lletters');
-'JASMINE'.split('').forEach((ch,i)=>{
-  const s=document.createElement('span');
-  s.textContent=ch===' '?'\u00a0':ch;
-  if(i<6)s.classList.add('g');
-  s.style.animationDelay=(i*.042)+'s';
-  lleEl.appendChild(s);
-});
-let pv=0; const lpEl=document.getElementById('lpct');
-const pInt=setInterval(()=>{ pv=Math.min(pv+Math.random()*5,95); lpEl.textContent=Math.floor(pv)+'%'; },80);
-window.addEventListener('load',()=>{
-  clearInterval(pInt); lpEl.textContent='100%';
-  setTimeout(()=>{
-    const l=document.getElementById('loader');
-    l.style.transition='opacity .5s ease,transform .5s ease';
-    l.style.opacity='0'; l.style.transform='translateY(-16px)';
-    setTimeout(()=>{ l.style.display='none'; document.getElementById('heroH1').classList.add('go'); setTimeout(startTyped,500); },550);
-  },1900);
-});
-
-/* ── CURSOR ── */
-const cd=document.getElementById('cd'),cr=document.getElementById('cr');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cd.style.left=mx+'px'; cd.style.top=my+'px'; });
-(function loop(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; cr.style.left=rx+'px'; cr.style.top=ry+'px'; requestAnimationFrame(loop); })();
-document.querySelectorAll('a,button,.proj-card,.cert-card,.stat-item,.xp-card,.ach-item').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
-});
-
-/* ── NAV ── */
-const navEl=document.getElementById('nav'),navAs=document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll',()=>{
-  navEl.classList.toggle('stuck',scrollY>60);
-  let cur='';
-  document.querySelectorAll('section[id]').forEach(s=>{ if(scrollY>=s.offsetTop-200)cur=s.id; });
-  navAs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
-  document.getElementById('bgW').style.transform=`translateY(${scrollY*.18}px)`;
-  observeAll();
-});
-
-/* ── HAM ── */
-const ham=document.getElementById('ham'),fm=document.getElementById('fmenu');
-let mo=false;
-ham.addEventListener('click',()=>{
-  mo=!mo; fm.classList.toggle('open',mo);
-  const[a,b,c]=ham.querySelectorAll('span');
-  if(mo){a.style.transform='rotate(45deg) translateY(6.5px)';b.style.opacity='0';c.style.transform='rotate(-45deg) translateY(-6.5px)';}
-  else{a.style.transform='';b.style.opacity='1';c.style.transform='';}
-});
-fm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-  mo=false;fm.classList.remove('open');
-  ham.querySelectorAll('span').forEach(s=>{s.style.transform='';s.style.opacity='1';});
-}));
-
-/* ── TYPED ── */
-let wi=0,ci=0,del=false;
-const typEl=document.getElementById('typed-el');
-function startTyped(){
-  (function t(){
-    const w=TYPED[wi];
-    if(!del){typEl.textContent=w.slice(0,++ci);if(ci===w.length){del=true;setTimeout(t,1500);return;}}
-    else{typEl.textContent=w.slice(0,--ci);if(ci===0){del=false;wi=(wi+1)%TYPED.length;}}
-    setTimeout(t,del?38:72);
-  })();
-}
-
-/* ── MARQUEE ── */
-const mqt=document.getElementById('mqtrack');
-[...MQ_ITEMS,...MQ_ITEMS].forEach(txt=>{
-  const s=document.createElement('span');s.className='mq-item';
-  s.innerHTML=txt+'<span class="mq-dot">✦</span>';mqt.appendChild(s);
-});
-
-/* ── BUILD TAGS ── */
-const tc=document.getElementById('tagcloud');
-TAGS.forEach(t=>{ const d=document.createElement('div');d.className='atag';d.textContent=t;tc.appendChild(d); });
-
-/* ── BUILD EXPERIENCE ── */
-const xl=document.getElementById('xplist');
-EXPERIENCES.forEach(e=>{
-  xl.innerHTML+=`<div class="xp-card">
-    <div class="xp-top"><div class="xp-role">${e.role}</div><div class="xp-date">${e.date}</div></div>
-    <div class="xp-company">${e.company}</div>
-    <ul class="xp-bullets">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
-  </div>`;
-});
-
-/* ── BUILD SKILLS ── */
-const sg=document.getElementById('skillsgrid');
-SKILLS_BARS.forEach(s=>{
-  sg.innerHTML+=`<div class="sk-row sr">
-    <div class="sk-top"><div class="sk-name">${s.n}</div><div class="sk-pct">${s.p}%</div></div>
-    <div class="sk-bar"><div class="sk-fill" data-w="${s.p}"></div></div>
-  </div>`;
-});
-const sc=document.getElementById('skcats');
-SKILL_CATS.forEach(c=>{
-  sc.innerHTML+=`<div class="sk-cat sr">
-    <div class="sk-cat-lbl">${c.lbl}</div>
-    <div class="sk-cat-items">${c.items.map(i=>`<span class="sk-chip">${i}</span>`).join('')}</div>
-  </div>`;
-});
-
-/* ── BUILD PROJECTS ── */
-const pg=document.getElementById('projgrid');
-PROJECTS.forEach(p=>{
-  pg.innerHTML+=`<a class="proj-card sr" href="${p.href}">
-    <div class="proj-top"><div class="proj-num">${p.n}</div><div class="proj-arr">↗</div></div>
-    <div>
-      <div class="proj-ttl">${p.title}</div>
-      <div class="proj-tech">${p.tech}</div>
-      <div class="proj-desc">${p.desc}</div>
-      <div class="proj-tags">${p.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
-    </div>
-  </a>`;
-});
-
-/* ── BUILD CERTS ── */
-const cg=document.getElementById('certgrid');
-CERTS.forEach(c=>{
-  cg.innerHTML+=`<div class="cert-card sr"><div class="cert-yr">${c.yr}</div><div class="cert-name">${c.name}</div><div class="cert-org">${c.org}</div></div>`;
-});
-
-/* ── BUILD ACHIEVEMENTS ── */
-const al=document.getElementById('achlist');
-ACHIEVEMENTS.forEach(a=>{
-  al.innerHTML+=`<div class="ach-item sr"><div class="ach-icon">${a.icon}</div><div class="ach-txt">${a.txt}</div></div>`;
-});
-
-/* ── SCROLL REVEAL ── */
-const srObs=new IntersectionObserver(es=>{
-  es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('vis');srObs.unobserve(e.target);} });
-},{threshold:0.1});
-function observeAll(){ document.querySelectorAll('.sr:not(.vis)').forEach(el=>srObs.observe(el)); }
-observeAll(); setTimeout(observeAll,200);
-
-/* ── SKILL BARS ── */
-const barObs=new IntersectionObserver(es=>{
-  es.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('.sk-fill').forEach(f=>{ setTimeout(()=>f.style.width=f.dataset.w+'%',200); });
-      barObs.unobserve(e.target);
-    }
+(function(){
+  // see more / see less
+  document.querySelectorAll('.seemore').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var box = document.getElementById(btn.getAttribute('data-target'));
+      if(!box) return;
+      btn.textContent = box.classList.toggle('open') ? 'see less' : '…see more';
+    });
   });
-},{threshold:0.2});
-setTimeout(()=>document.querySelectorAll('.sk-row').forEach(el=>barObs.observe(el)),200);
 
-/* ── FORM VALIDATION ── */
-/* ⚠️  EmailJS Setup (free — 2 min):
-   1. emailjs.com → sign up → Add Gmail service → copy SERVICE_ID
-   2. Create template with: {{from_name}} {{from_email}} {{phone}} {{subject}} {{message}}
-   3. Copy TEMPLATE_ID & PUBLIC_KEY → paste below                              */
-const EJ_KEY ='YOUR_PUBLIC_KEY';
-const EJ_SVC ='YOUR_SERVICE_ID';
-const EJ_TPL ='YOUR_TEMPLATE_ID';
-try{ emailjs.init(EJ_KEY); }catch(e){}
-
-const fName=document.getElementById('f-name'),fEmail=document.getElementById('f-email'),
-      fPhone=document.getElementById('f-phone'),fSubj=document.getElementById('f-subj'),
-      fMsg=document.getElementById('f-msg'),subBtn=document.getElementById('submitbtn'),
-      btnTxt=document.getElementById('btntxt'),fStatus=document.getElementById('fstatus');
-
-function setFF(id,valid,errTxt){
-  const el=document.getElementById('ff-'+id);
-  el.classList.remove('err','ok');
-  el.classList.add(valid?'ok':'err');
-  if(!valid&&errTxt){ const e=el.querySelector('.ff-err'); if(e)e.textContent=errTxt; }
-  return valid;
-}
-function clearFF(id){ const el=document.getElementById('ff-'+id); if(el)el.classList.remove('err','ok'); }
-function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-// Live validation
-fName.addEventListener('input',()=>{ const v=fName.value.trim(); if(v)setFF('name',v.length>=2,'Min 2 characters'); else clearFF('name'); });
-fEmail.addEventListener('input',()=>{ const v=fEmail.value.trim(); if(v)setFF('email',isEmail(v),isEmail(v)?'':'Invalid email format'); else clearFF('email'); });
-fPhone.addEventListener('input',()=>{ const v=fPhone.value.trim(); if(v)setFF('phone',/^[0-9+\-\s()]{7,15}$/.test(v),'Invalid phone'); });
-fSubj.addEventListener('input',()=>{ const v=fSubj.value.trim(); if(v)setFF('subj',v.length>=3,'Min 3 characters'); else clearFF('subj'); });
-fMsg.addEventListener('input',()=>{ const v=fMsg.value.trim(); if(v)setFF('msg',v.length>=20,'Min 20 characters'); else clearFF('msg'); });
-
-function validateAll(){
-  const n=fName.value.trim(),em=fEmail.value.trim(),s=fSubj.value.trim(),m=fMsg.value.trim();
-  let ok=true;
-  if(!setFF('name',n.length>=2,n?'Min 2 characters':'Name is required'))ok=false;
-  if(!setFF('email',isEmail(em),em?'Invalid email format':'Email is required'))ok=false;
-  if(!setFF('subj',s.length>=3,s?'Min 3 characters':'Subject is required'))ok=false;
-  if(!setFF('msg',m.length>=20,m?'Min 20 characters, currently '+m.length:'Message is required'))ok=false;
-  return ok;
-}
-
-document.getElementById('cform').addEventListener('submit',async e=>{
-  e.preventDefault();
-  fStatus.className='form-status'; fStatus.style.display='none';
-  if(!validateAll()){ fStatus.textContent='⚠ Please fix the errors above before sending.'; fStatus.className='form-status fail'; return; }
-  subBtn.disabled=true; btnTxt.textContent='Sending...';
-  const params={from_name:fName.value.trim(),from_email:fEmail.value.trim(),phone:fPhone.value.trim()||'Not provided',subject:fSubj.value.trim(),message:fMsg.value.trim(),to_email:'chabbrajasmine275@gmail.com'};
-  if(EJ_KEY==='YOUR_PUBLIC_KEY'){
-    await new Promise(r=>setTimeout(r,1400));
-    fStatus.textContent='✓ Demo mode! Configure EmailJS keys to enable real email delivery to chabbrajasmine275@gmail.com';
-    fStatus.className='form-status success';
-    subBtn.disabled=false; btnTxt.textContent='Send Message →'; return;
+  // copy email
+  var btn = document.getElementById('copyBtn'), addr = document.getElementById('addr');
+  if(btn && addr){
+    btn.addEventListener('click', function(){
+      var flash = function(w){ btn.textContent = w; setTimeout(function(){ btn.textContent='Copy'; },1800); };
+      var select = function(){
+        try{
+          var r=document.createRange(); r.selectNodeContents(addr);
+          var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); flash('Selected');
+        }catch(e){}
+      };
+      try{ navigator.clipboard.writeText(addr.textContent.trim()).then(function(){flash('Copied');}, select); }
+      catch(e){ select(); }
+    });
   }
-  try{
-    await emailjs.send(EJ_SVC,EJ_TPL,params);
-    fStatus.textContent='✓ Message sent! I\'ll reply within 24 hours — chabbrajasmine275@gmail.com';
-    fStatus.className='form-status success';
-    document.getElementById('cform').reset();
-    ['name','email','phone','subj','msg'].forEach(id=>clearFF(id));
-    btnTxt.textContent='Send Message →';
-  }catch(err){
-    fStatus.textContent='✗ Failed to send. Please email chabbrajasmine275@gmail.com directly or try again.';
-    fStatus.className='form-status fail';
-    btnTxt.textContent='Send Message →';
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // count up — the final value is already in the HTML, this only animates to it
+  if(!reduce){
+    document.querySelectorAll('.stat b[data-to]').forEach(function(el){
+      var to = parseFloat(el.getAttribute('data-to'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      var dec = (el.getAttribute('data-to').indexOf('.') > -1) ? 1 : 0;
+      var start = null, dur = 900;
+      function step(ts){
+        if(start === null) start = ts;
+        var p = Math.min(1, (ts - start) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = (to * eased).toFixed(dec) + suffix;
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
   }
-  subBtn.disabled=false;
-});
+
+  // ---- live demos -------------------------------------------------------
+  var $ = function(id){ return document.getElementById(id); };
+  var val = function(id){ return $(id).value; };
+  var put = function(id, s){ var e = $(id); if(e) e.textContent = s; };
+  var inr = function(n){ return '₹' + n.toLocaleString('en-IN'); };
+  var r2  = function(x){ return Math.round(x * 100) / 100; };
+
+  function paintRules(host, rows){
+    host.innerHTML = '';
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'rule ' + r.state;
+      var c = document.createElement('span'); c.className = 'c'; c.textContent = r.code;
+      var d = document.createElement('span'); d.className = 'd';
+      d.textContent = (r.delta === null) ? '—' : (r.delta > 0 ? '+' + r.delta : String(r.delta));
+      var e = document.createElement('span'); e.className = 'e'; e.textContent = r.why;
+      row.appendChild(c); row.appendChild(d); row.appendChild(e);
+      host.appendChild(row);
+    });
+  }
+  function paintVerdict(badgeId, scoreId, barId, label, cls, score, pct){
+    var b = $(badgeId); b.textContent = label; b.className = 'badge ' + cls;
+    put(scoreId, String(score));
+    var bar = $(barId);
+    bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+    bar.style.background = cls === 'good' ? 'var(--good)' : (cls === 'warn' ? 'var(--warn)' : 'var(--bad)');
+  }
+
+  // LoanIQ — base 500, APPROVE >= 580, REFER >= 520
+  function loaniq(){
+    if(!$('lq-bureau')) return;
+    var bureau = +val('lq-bureau'), income = +val('lq-income'), oblig = +val('lq-oblig'),
+        amount = +val('lq-amount'), tenure = +val('lq-tenure'), emp = val('lq-emp');
+
+    put('lq-bureau-v', bureau); put('lq-income-v', inr(income)); put('lq-oblig-v', inr(oblig));
+    put('lq-amount-v', inr(amount)); put('lq-tenure-v', tenure + ' mo');
+
+    var score = 500, rows = [], stopped = false, idle = 'Not reached; the engine stopped above.';
+
+    if(bureau < 620){
+      rows.push({code:'BUREAU_MIN', state:'stop', delta:null, why:'Bureau score ' + bureau + ' is below the hard floor of 620. Hard stop.'});
+      stopped = true;
+    } else {
+      var db = Math.min(40, Math.floor((bureau - 620) / 5)); score += db;
+      rows.push({code:'BUREAU_MIN', state:'pass', delta:db, why:'Bureau score ' + bureau + ' clears the floor of 620.'});
+    }
+
+    if(stopped){ rows.push({code:'DTI', state:'idle', delta:null, why:idle}); }
+    else {
+      var dti = r2(oblig / income);
+      if(dti > 0.45){ score -= 45; rows.push({code:'DTI', state:'fail', delta:-45, why:'Debt-to-income ' + dti.toFixed(2) + ' exceeds the 0.45 ceiling.'}); }
+      else { var dd = Math.min(30, Math.floor((0.45 - dti) * 60)); score += dd;
+             rows.push({code:'DTI', state:'pass', delta:dd, why:'Debt-to-income ' + dti.toFixed(2) + ' is within the 0.45 ceiling.'}); }
+    }
+
+    if(stopped){ rows.push({code:'LTI', state:'idle', delta:null, why:idle}); }
+    else {
+      var mult = r2(amount / (income * 12));
+      if(mult > 4.0){ score -= 35; rows.push({code:'LTI', state:'fail', delta:-35, why:'Requested amount is ' + mult.toFixed(2) + 'x annual income, above the 4.00x ceiling.'}); }
+      else { score += 20; rows.push({code:'LTI', state:'pass', delta:20, why:'Requested amount is ' + mult.toFixed(2) + 'x annual income, within the 4.00x ceiling.'}); }
+    }
+
+    if(stopped){ rows.push({code:'EMPLOYMENT', state:'idle', delta:null, why:idle}); }
+    else if(emp === 'UNEMPLOYED'){
+      rows.push({code:'EMPLOYMENT', state:'stop', delta:null, why:'Applicant is unemployed; no serviceable income source. Hard stop.'});
+      stopped = true;
+    } else {
+      var m = {SALARIED:[20,'Salaried income is predictable.'],
+               CONTRACT:[5,'Contract income is serviceable but less predictable than salaried.'],
+               SELF_EMPLOYED:[0,'Self-employed income varies; no uplift applied.']}[emp];
+      score += m[0];
+      rows.push({code:'EMPLOYMENT', state:'pass', delta:m[0], why:m[1]});
+    }
+
+    if(stopped){ rows.push({code:'TENURE', state:'idle', delta:null, why:idle}); }
+    else if(tenure < 6 || tenure > 84){
+      rows.push({code:'TENURE', state:'stop', delta:null, why:'Tenure of ' + tenure + ' months is outside the supported 6-84 range. Hard stop.'});
+      stopped = true;
+    } else { score += 5; rows.push({code:'TENURE', state:'pass', delta:5, why:'Tenure of ' + tenure + ' months is within the supported range.'}); }
+
+    var final = stopped ? 0 : Math.max(0, Math.min(1000, score));
+    var label, cls;
+    if(stopped){ label = 'DECLINE'; cls = 'bad'; }
+    else if(final >= 580){ label = 'APPROVE'; cls = 'good'; }
+    else if(final >= 520){ label = 'REFER'; cls = 'warn'; }
+    else { label = 'DECLINE'; cls = 'bad'; }
+
+    paintVerdict('lq-badge','lq-score','lq-bar', label, cls, final, final / 10);
+    paintRules($('lq-rules'), rows);
+  }
+
+  // SentinelPay — additive, capped at 100. BLOCK >= 70, REVIEW >= 35
+  function sentinel(){
+    if(!$('sp-amount')) return;
+    var AVG = 1000;
+    var amount = +val('sp-amount'), count = +val('sp-count'), chan = val('sp-chan');
+    var newDev = $('sp-dev').querySelector('[aria-pressed="true"]').getAttribute('data-v') === '1';
+    var newGeo = $('sp-geo').querySelector('[aria-pressed="true"]').getAttribute('data-v') === '1';
+
+    put('sp-amount-v', inr(amount)); put('sp-count-v', String(count));
+
+    var rows = [], total = 0;
+
+    if(count < 4){ rows.push({code:'VELOCITY', state:'idle', delta:0, why:count + ' payments in the last 10 minutes, under the threshold of 4.'}); }
+    else { var w = Math.min(45, 15 + (count - 4 + 1) * 10); total += w;
+           rows.push({code:'VELOCITY', state:'fail', delta:w, why:count + ' payments in the last 10 minutes, threshold is 4.'}); }
+
+    var mult = r2(amount / AVG);
+    if(mult > 5.0){ var wa = Math.min(40, Math.trunc((mult - 5.0) * 10) + 15); total += wa;
+      rows.push({code:'AMOUNT_ANOMALY', state:'fail', delta:wa, why:'Amount is ' + mult.toFixed(2) + 'x the account average of ' + inr(AVG) + ', limit is 5.00x.'}); }
+    else { rows.push({code:'AMOUNT_ANOMALY', state:'idle', delta:0, why:'Amount is ' + mult.toFixed(2) + 'x the account average, within the 5.00x limit.'}); }
+
+    if(newDev){ total += 20; rows.push({code:'NEW_DEVICE', state:'fail', delta:20, why:'This device has not been seen on the account before.'}); }
+    else { rows.push({code:'NEW_DEVICE', state:'idle', delta:0, why:'Device has been seen on this account before.'}); }
+
+    if(newGeo){ total += 25; rows.push({code:'GEO_NOVEL', state:'fail', delta:25, why:'First payment from this country on the account.'}); }
+    else { rows.push({code:'GEO_NOVEL', state:'idle', delta:0, why:'Country is familiar for this account.'}); }
+
+    if(chan === 'CARD_NOT_PRESENT'){ total += 10; rows.push({code:'CNP', state:'fail', delta:10, why:'Card-not-present carries a higher baseline fraud rate.'}); }
+    else { rows.push({code:'CNP', state:'idle', delta:0, why:'Channel ' + chan + ' is not card-not-present.'}); }
+
+    var score = Math.min(100, total);
+    var label, cls;
+    if(score >= 70){ label = 'BLOCK'; cls = 'bad'; }
+    else if(score >= 35){ label = 'REVIEW'; cls = 'warn'; }
+    else { label = 'ALLOW'; cls = 'good'; }
+
+    paintVerdict('sp-badge','sp-score','sp-bar', label, cls, score, score);
+    paintRules($('sp-rules'), rows);
+  }
+
+  ['lq-bureau','lq-income','lq-oblig','lq-amount','lq-tenure','lq-emp'].forEach(function(id){
+    var e = $(id); if(e) e.addEventListener('input', loaniq);
+  });
+  ['sp-amount','sp-count','sp-chan'].forEach(function(id){
+    var e = $(id); if(e) e.addEventListener('input', sentinel);
+  });
+  ['sp-dev','sp-geo'].forEach(function(id){
+    var g = $(id); if(!g) return;
+    g.addEventListener('click', function(ev){
+      var b = ev.target.closest('button'); if(!b) return;
+      g.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+      sentinel();
+    });
+  });
+  loaniq(); sentinel();
+
+  // scroll-spy
+  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var targets = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if('IntersectionObserver' in window && targets.length){
+    var seen = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ seen[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+      var best = null, bestVal = 0;
+      Object.keys(seen).forEach(function(id){ if(seen[id] > bestVal){ bestVal = seen[id]; best = id; } });
+      links.forEach(function(a){ a.classList.toggle('on', best && a.getAttribute('href') === '#' + best); });
+    }, { rootMargin: '-72px 0px -55% 0px', threshold: [0, .25, .5, 1] });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
 </script>
 </body>
 </html>
