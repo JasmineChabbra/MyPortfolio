@@ -115,7 +115,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* ---------- top bar ---------- */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--card);border-bottom:1px solid var(--line)}
 .topbar-in{
-  max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;
+  max-width:1128px;margin:0 auto;display:flex;align-items:center;gap:12px;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:8px;
@@ -124,7 +124,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tb-mark img{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
 .tb-name{font-weight:700;font-size:14.5px;line-height:1.15;white-space:nowrap;display:block;overflow:hidden;text-overflow:ellipsis}
 .tb-role{font-size:11.5px;color:var(--ink-2);line-height:1.2;white-space:nowrap;display:block}
-.tb-nav{margin-left:auto;display:flex;gap:1px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto;justify-content:flex-end}
+.tb-nav{margin-left:auto;display:flex;gap:1px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:0 1 auto;justify-content:flex-start}
 .tb-nav::-webkit-scrollbar{display:none}
 .tb-nav a{
   font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 9px;border-radius:5px;
@@ -134,13 +134,34 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tb-nav a.on{color:var(--blue-ink);background:var(--blue-wash);font-weight:600}
 
 /* ---------- column ---------- */
-.page{
-  max-width:760px;margin:0 auto;
+.shell{
+  max-width:1128px;margin:0 auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:16px 52px;
-  display:flex;flex-direction:column;gap:12px;
+  display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start;
 }
+.page{display:flex;flex-direction:column;gap:12px;min-width:0}
+.rail{display:none;flex-direction:column;gap:12px;min-width:0}
+@media (min-width:1080px){
+  .shell{grid-template-columns:minmax(0,1fr) 308px}
+  .rail{display:flex;position:sticky;top:78px}
+}
+.rail h3{font-size:14px;font-weight:700;margin:0 0 11px}
+.glance{display:flex;flex-direction:column;gap:9px}
+.glance div{display:flex;gap:10px;font-size:13px;align-items:baseline}
+.glance dt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);flex:none;width:78px;
+}
+.glance dd{margin:0;color:var(--ink);min-width:0}
+.raillinks{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.raillinks a{font-size:13.5px;font-weight:600;text-decoration:none}
+.raillinks a:hover{text-decoration:underline}
+.nowlist{display:flex;flex-direction:column;gap:11px}
+.nowlist a{display:block;text-decoration:none;color:inherit}
+.nowlist b{display:block;font-size:13.5px;font-weight:700;color:var(--blue-ink)}
+.nowlist span{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.45;margin-top:2px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
 .card-pad{padding:22px}
 h2.sec{font-size:19px;font-weight:700;letter-spacing:-.005em;margin:0 0 15px}
@@ -349,7 +370,8 @@ h2.sec{font-size:19px;font-weight:700;letter-spacing:-.005em;margin:0 0 15px}
 .rule.idle{opacity:.45}
 .rule.idle .d{color:var(--ink-3)}
 .flowfig{margin:14px 0 0;border:1px solid var(--line);border-radius:9px;background:var(--card-2);padding:13px}
-.flowfig svg{display:block;width:100%;height:auto}
+.flowfig .scroller{overflow-x:auto;max-width:100%}
+.flowfig svg{display:block;width:100%;min-width:520px;height:auto}
 .flowfig figcaption{font-size:12px;color:var(--ink-2);margin-top:9px;line-height:1.5}
 
 footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
@@ -365,6 +387,21 @@ footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
   .prj-top .when{margin-left:0;flex-basis:100%}
   .card-pad{padding:18px}
   .pro-body{padding:0 18px 18px}
+  .shell{padding-block:12px 40px}
+}
+@media (max-width:430px){
+  .rule{flex-wrap:wrap;gap:4px 10px}
+  .rule .c{width:auto;flex:1 1 auto}
+  .rule .d{width:auto;text-align:left}
+  .rule .e{flex:1 1 100%}
+  .clabel{min-width:0;flex-basis:100%}
+  .crow{gap:5px 8px}
+  .pro-name{font-size:22px}
+  .card-pad{padding:15px}
+  .pro-body{padding:0 15px 16px}
+  .banner code{font-size:10.5px;left:15px;top:15px}
+  .stat{padding:14px 15px}
+  .stat b{font-size:23px}
 }
 </style>
 </head>
@@ -390,6 +427,7 @@ footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
   </div>
 </header>
 
+<div class="shell">
 <div class="page" id="top">
 
   <section class="card">
@@ -692,6 +730,7 @@ footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
         <span class="tag">SQL</span><span class="tag">REST</span>
       </div>
       <figure class="flowfig">
+        <div class="scroller">
         <svg viewBox="0 0 620 158" role="img" aria-label="A payout fails at the bank transfer step; the retry resumes at that step instead of replaying the two steps that already completed.">
           <g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink-3)">
             <text x="0" y="40">attempt 1</text>
@@ -730,6 +769,7 @@ footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
           </g>
           <text x="141" y="146" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--ink-3)" text-anchor="middle">already recorded complete</text>
         </svg>
+        </div>
         <figcaption>The retry does not replay the first two steps. Each step records its own completion against the payout's idempotency key, so a resume starts where it stopped and the money moves once.</figcaption>
       </figure>
       <a class="prj-link" href="https://github.com/JasmineChabbra/payrelay" target="_blank" rel="noopener">github.com/JasmineChabbra/payrelay ↗</a>
@@ -849,6 +889,33 @@ footer{text-align:center;font-size:12.5px;color:var(--ink-3);padding-top:6px}
   </section>
 
   <footer>© 2026 Jasmine Chabbra · Noida, India</footer>
+</div>
+
+<aside class="rail" aria-label="At a glance">
+  <section class="card card-pad">
+    <h3>At a glance</h3>
+    <dl class="glance">
+      <div><dt>Role</dt><dd>Associate Software Engineer, Lentra</dd></div>
+      <div><dt>Stack</dt><dd>Java 21, Spring Boot, PostgreSQL</dd></div>
+      <div><dt>Based in</dt><dd>Noida, India</dd></div>
+      <div><dt>Notice</dt><dd>1 month</dd></div>
+      <div><dt>Looking for</dt><dd>Backend / SDE roles</dd></div>
+    </dl>
+    <div class="raillinks">
+      <a href="https://github.com/JasmineChabbra" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jasminechabbra/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="#contact">Contact info</a>
+    </div>
+  </section>
+
+  <section class="card card-pad">
+    <h3>Currently building</h3>
+    <div class="nowlist">
+      <a href="#projects"><b>LoanIQ</b><span>Credit underwriting where the rule engine decides and the model only explains.</span></a>
+      <a href="#projects"><b>SentinelPay</b><span>Payment fraud scoring on the hot path, an agent behind the hold.</span></a>
+    </div>
+  </section>
+</aside>
 </div>
 
 <script>
